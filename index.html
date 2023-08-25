@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Electron Photo Display with Masonry Layout</title>
+  <!-- Include the Masonry Layout CSS -->
+  <link rel="stylesheet" href="node_modules/masonry-layout/dist/masonry.pkgd.min.css">
+  <link rel="stylesheet" href="stylesheet.css">
+  <script defer src="appFunctions.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div id="header" class="mainApp">
+      <div class="topBar">
+          <div class="titleBar">
+            <div class="title">
+              Meisunry
+            </div>
+          </div>
+          <div class="titleBarBtns">
+            <button id="minimizeBtn" class="topBtn minimizeBtn"></button>
+            <button id="maxResBtn" class="topBtn maximizeBtn"></button>
+            <button id="closeBtn" class="topBtn closeBtn"></button>
+          </div>
+        </div>
+      </div>
+      
+      <div id="grid-wrapper" class="grid-wrapper">
+        <div class="grid" id="imageGrid">
+        </div>
+  </div>
+  
+  <dive id="done-pop-up">
+      <p>Done</p>
+      <div class="check topBtn"></div>
+  </dive>
+  
+  <!-- Include the Masonry Layout JavaScript -->
+  <script src="node_modules/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <!-- Initialize Masonry Layout -->
+  
+  <script src="renderer.js"></script>
+  <script src="dropListener.js"></script>
+</body>
+</html>

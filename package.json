@@ -1,0 +1,34 @@
+{
+  "name": "meisunry",
+  "version": "1.0.0",
+  "description": "A masonry photo viewer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.1.0",
+    "electron-builder": "^24.6.3"
+  },
+  "dependencies": {
+    "electron-context-menu": "^3.6.1",
+    "masonry-layout": "^4.2.2"
+  },
+  "iohook": {
+    "targets": [
+      "node-72",
+      "electron-85"
+    ],
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "arches": [
+      "x64",
+      "ia32"
+    ]
+  }
+}
