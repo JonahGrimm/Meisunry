@@ -3,37 +3,86 @@ const ipcRend = window.ipcRenderer;
 
 const imageGrid = document.getElementById('imageGrid');
 
-const rawData = fs.readFileSync("preferences.json", 'utf8');
-const preferencesData = JSON.parse(rawData);
+rawData = fs.readFileSync("preferences.json", 'utf8');
+preferencesData = JSON.parse(rawData);
+
+function updatePreferencesData() {
+  rawData = fs.readFileSync("preferences.json", 'utf8');
+  preferencesData = JSON.parse(rawData);
+}
 
 currentZoom = 1;
 currentPadding = .98;
 
 let grid;
+let resortAfterImageLoad;
 
 ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
-
-  files.forEach(file => {
-    const imgPath = `${preferencesData.folderLocation}/${file.name}`;
-    const imgElement = document.createElement('img');
-    imgElement.id = `${file.name}`;
-    imgElement.className = "grid-image";
-
-    const gridItem = document.createElement('div');
-    gridItem.className = 'grid-item';
-    gridItem.appendChild(imgElement);
-
-    imageGrid.appendChild(gridItem);
-  });
-
-  loadImages(files);
+  resortAfterImageLoad = false;
 
   grid = new Masonry('.grid', {
     itemSelector: '.grid-item',
+    gutter: 0,
   });
 
+  files = resort(files);
+  handle_resort(files);
+  loadImages(files);
+
+  window.electronAPI.onSortUpdate((event, value) => {
+    console.log('sort update');
+    updatePreferencesData();
+    files = resort(files);
+    handle_resort(files);
+    resortAfterImageLoad = true;
+  })
+
+  // Lazy loads images. Does so with a bit of a delays
+  async function loadImages(input_files) {
+    const delay = 5; // Delay in milliseconds
+    const cached_files = [...input_files];
+
+    for (const file of cached_files) {
+      // Only generate a new element and append it if it doesn't already exist
+      const existingEl = document.getElementById(`${file.name}`);
+      if (existingEl != null) continue;
+
+      // Create img element
+      const imgPath = `${preferencesData.folderLocation}/${file.name}`;
+      const imgElement = document.createElement('img');
+      imgElement.src = imgPath;
+      imgElement.id = `${file.name}`;
+      imgElement.className = "grid-image";
+
+      // Create div element
+      const gridItem = document.createElement('div');
+      gridItem.className = 'grid-item';
+      gridItem.appendChild(imgElement);
+
+      // Add to grid
+      imageGrid.appendChild(gridItem);
+      grid.appended(gridItem);
+      grid.reloadItems();
+      grid.layout();
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    // Show done pop up
+    const popUp = document.getElementById(`done-pop-up`);
+    popUp.classList.add('show');
+
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    for (const file of cached_files) {
+      // Only generate a new element and append it if it doesn't already exist
+      const existingEl = document.getElementById(`${file.name}`);
+      if (existingEl != null) existingEl.classList.add("shown");
+    }
+
+    if (resortAfterImageLoad) handle_resort(files);
+    resortAfterImageLoad = false;
+  }
+
   // Listen for the wheel event to adjust the CSS property
-  const gridItems = document.querySelectorAll('.grid-image');
   imageGrid.addEventListener('wheel', event => {
     if (event.ctrlKey) {
       event.preventDefault();
@@ -41,7 +90,7 @@ ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
       // Determine the direction of the scroll
       const zoomAmount = event.deltaY > 0 ? -0.1 : 0.1;
       currentZoom += zoomAmount;
-      update_images(gridItems);  
+      update_images();  
       // Trigger Masonry Layout's layout after changing the CSS property
       grid.layout();    
     }
@@ -51,16 +100,16 @@ ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
       const paddingAmount = event.deltaY > 0 ? 0.1 : -0.1;
       currentPadding += paddingAmount;
       currentPadding = Math.max(Math.min(currentPadding, 1), 0.25);
-      update_images(gridItems);
+      update_images();
       // Trigger Masonry Layout's layout after changing the CSS property
       grid.layout();
     }
   });
 
-  setTimeout(() => { update_images(gridItems); grid.layout(); }, 100);
+  setTimeout(() => { update_images(); grid.layout(); }, 100);
 
   window.addEventListener('resize', function(event) {
-      update_images(gridItems);
+      update_images();
       // Trigger Masonry Layout's layout after changing the CSS property
       grid.layout();
   }, true);
@@ -69,7 +118,8 @@ ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
   console.error('Error reading image folder:', err);
 });
 
-function update_images(gridItems) {
+function update_images() {
+  const gridItems = document.querySelectorAll('.grid-image');
   // Get new width
   width = calc_width();
   gridItems.forEach(item => {
@@ -95,20 +145,29 @@ function get_transform_correction_scale() {
   return transformScale;
 }
 
-// Lazy loads images. Does so with a bit of a delay
-async function loadImages(files) {
-  const delay = 15; // Delay in milliseconds
-
-  for (const file of files) {
-    const imgPath = `${preferencesData.folderLocation}/${file.name}`;
-    const imgElement = document.getElementById(`${file.name}`);
-    imgElement.src = imgPath;
-    imgElement.classList.add('show');
-    await new Promise(resolve => setTimeout(resolve, delay));
-    grid.layout();
+function resort(files) {
+  switch (preferencesData.sortMode) {
+    case 'date':
+      console.log(`date`);
+      files = files.sort((a, b) => b.date - a.date); break;
+      case 'name':
+      console.log(`name`);
+      files = files.sort((a, b) => a.name.localeCompare(b.name)); break;
   }
-
-  // Show done pop up
-  const popUp = document.getElementById(`done-pop-up`);
-  popUp.classList.add('show');
+  return files;
 }
+
+function handle_resort(cached_files) {
+  cached_files.reverse().forEach(file => {
+    const imgElement = document.getElementById(`${file.name}`);
+    if (imgElement == null) return;
+    const divElement = imgElement.parentElement;
+    const parentElement = divElement.parentElement;
+    parentElement.insertBefore(divElement, parentElement.firstChild);
+  });
+  cached_files.reverse();
+  grid.reloadItems();
+  grid.layout();
+}
+
+

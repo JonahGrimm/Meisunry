@@ -8,13 +8,29 @@ const preferencesData = JSON.parse(rawData);
 
 contextMenu({
     prepend: (defaultActions, parameters, browserWindow) => [
-    /*{
-      label: `Test`,
-      // Only show it when right-clicking text
-      click: () => {
-        browserWindow.webContents.send('main-process-message', 'Hello from main process!');
-      }
-    },*/
+    {
+      label: 'Sort By',
+      type: 'submenu',
+      submenu: [
+      {
+        click: () => { 
+          preferencesData.sortMode = 'date';
+          fs.writeFileSync('preferences.json', JSON.stringify(preferencesData, null, 2));
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Date'
+      },
+      {
+        click: () =>  { 
+          preferencesData.sortMode = 'name';
+          fs.writeFileSync('preferences.json', JSON.stringify(preferencesData, null, 2));
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Name'
+      },
+      ]
+    },
+
     {
       label: `Choose Folder...`,
       // Only show it when right-clicking text
@@ -65,14 +81,13 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
 
+  /* Functions for handling window min/max/close */
   ipcMain.on('closeApp', () => {
     app.quit();
   });
-
   ipcMain.on('minimizeApp', () => {
     mainWindow.minimize();
   });
-
   ipcMain.on('maximizeApp', () => {
     if (mainWindow.isMaximized())
       mainWindow.restore();
@@ -80,6 +95,7 @@ function createWindow() {
       mainWindow.maximize();
   });
 
+  /* Handler for when folder is dropped */
   ipcMain.on('folderDropped', (event, folder) => {
     loadFolder(mainWindow, folder);
   });

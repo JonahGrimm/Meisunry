@@ -1,7 +1,7 @@
 /* SCROLLBAR */
 /* width */
 ::-webkit-scrollbar {
-  width: 25px;
+  width: 30px;
 }
 /* Track */
 ::-webkit-scrollbar-track {
@@ -77,12 +77,23 @@
 .grid-image.show {
   opacity: 1; /* Transition to fully opaque */
 }
+@keyframes fadeIn {
+  0% { opacity: 0 }
+  100% { opacity: 1 }
+}
 .grid-image {
   max-width: 500px;
   min-width: 500px;
   transform-origin: top;
-  opacity: 0; /* Start with fully transparent */
-  transition: opacity 1s ease; /* Transition the opacity property over 1 second */
+  opacity: 1; /* Start with fully transparent */
+  animation: fadeIn 1s ease-in-out !important; /* Transition the opacity property over 1 second */
+}
+.grid-image.shown {
+  max-width: 500px;
+  min-width: 500px;
+  transform-origin: top;
+  opacity: 1; /* Start with fully transparent */
+  animation: inherit !important; /* Transition the opacity property over 1 second */
 }
 body {
   background: rgba(32, 32, 32, 1);
