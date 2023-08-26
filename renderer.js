@@ -42,6 +42,16 @@ ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
     const delay = 5; // Delay in milliseconds
     const cached_files = [...input_files];
 
+    noItemsEl = document.getElementById(`no-items-text`);
+    if (cached_files.length == 0)
+    {
+      noItemsEl.classList.add("show");
+      pathEl = document.getElementById(`folder-path`);
+      pathEl.innerHTML = preferencesData.folderLocation;
+      return;
+    }
+    noItemsEl.classList.remove("show");
+
     for (const file of cached_files) {
       // Only generate a new element and append it if it doesn't already exist
       const existingEl = document.getElementById(`${file.name}`);
