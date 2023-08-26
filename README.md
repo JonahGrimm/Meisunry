@@ -5,5 +5,5 @@ Masonry layouts are super common all over the web from websites like <a href="ht
 
 This is where <b>Meisunry</b> comes in. Choose a folder and look at your images without any unnecessary details.
 
-![Demo](/icons/demo.gif)
+![Demo](/app-icons/demo.gif)
 
