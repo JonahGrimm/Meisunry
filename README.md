@@ -7,3 +7,8 @@ This is where <b>Meisunry</b> comes in. Choose a folder and look at your images 
 
 ![Demo](/app-icons/demo.gif)
 
+## Controls
+
+<b>Ctrl + Mouse wheel:</b> Zoom in/out<br>
+<b>Shift + Mouse wheel:</b> Padding control<br>
+<b>Right click:</b> Sorting options and folder selection
