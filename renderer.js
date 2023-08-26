@@ -88,8 +88,9 @@ ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
       event.preventDefault();
 
       // Determine the direction of the scroll
-      const zoomAmount = event.deltaY > 0 ? -0.1 : 0.1;
-      currentZoom += zoomAmount;
+      const zoomAmount = event.deltaY > 0 ? 0.75 : 1.25;
+      currentZoom *= zoomAmount;
+      currentZoom = Math.max(currentZoom, 0.1);
       update_images();  
       // Trigger Masonry Layout's layout after changing the CSS property
       grid.layout();    
