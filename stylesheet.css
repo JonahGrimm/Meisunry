@@ -73,7 +73,7 @@
   transition: 0.2S;
   cursor: pointer;
   background-size: contain;
-  background-image: url('../Meisunry/app-icons/check.png');
+  background-image: url('./app-icons/check.png');
 }
 
 
@@ -198,16 +198,16 @@ body {
   background-color: #4F9FEE;
 }
 .titleBarBtns > .minimizeBtn {
-  background-image: url('../Meisunry/app-icons/icon_minimize.png');
+  background-image: url('./app-icons/icon_minimize.png');
 }
 .titleBarBtns > .maximizeBtn{
-  background-image: url('../Meisunry/app-icons/icon_maximize.png');
+  background-image: url('./app-icons/icon_maximize.png');
 }
 .titleBarBtns > .restoreBtn{
-  background-image: url('../Meisunry/app-icons/icon_restore.png');
+  background-image: url('./app-icons/icon_restore.png');
 }
   .titleBarBtns > .closeBtn{
-  background-image: url('../Meisunry/app-icons/icon_close.png');
+  background-image: url('./app-icons/icon_close.png');
 }
 
 .mainApp > .contentArea {

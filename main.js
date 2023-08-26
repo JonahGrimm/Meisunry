@@ -3,8 +3,35 @@ const path = require('path');
 const fs = require('fs');
 const contextMenu = require('electron-context-menu');
 
-const rawData = fs.readFileSync("preferences.json", 'utf8');
-const preferencesData = JSON.parse(rawData);
+function saveAppData() {
+  const userDataPath = app.getPath('userData');
+  const dataFilePath = path.join(userDataPath, 'appdata.json');
+  const serializedData = JSON.stringify(preferencesData, null, 2);
+  fs.writeFileSync(dataFilePath, serializedData);
+}
+
+function loadData() {
+  const userDataPath = app.getPath('userData');
+  const dataFilePath = path.join(userDataPath, 'appdata.json');
+
+  try {
+    const fileContents = fs.readFileSync(dataFilePath, 'utf-8');
+    const loadedData = JSON.parse(fileContents);
+    return loadedData;
+  } catch (error) {
+    /* Default json */
+    const baseData = {
+      folderLocation: "C:\\",
+      sortMode: "date"
+    }
+    const serializedData = JSON.stringify(baseData, null, 2);
+    fs.writeFileSync(dataFilePath, serializedData);
+    console.log(`${error}`);
+    return baseData;
+  }
+}
+
+const preferencesData = loadData();
 
 contextMenu({
     prepend: (defaultActions, parameters, browserWindow) => [
@@ -15,7 +42,7 @@ contextMenu({
       {
         click: () => { 
           preferencesData.sortMode = 'date';
-          fs.writeFileSync('preferences.json', JSON.stringify(preferencesData, null, 2));
+          saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
         label: 'Date'
@@ -23,7 +50,7 @@ contextMenu({
       {
         click: () =>  { 
           preferencesData.sortMode = 'name';
-          fs.writeFileSync('preferences.json', JSON.stringify(preferencesData, null, 2));
+          saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
         label: 'Name'
@@ -74,6 +101,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      zoomFactor: 0.01,
       preload: path.join(__dirname, 'preload.js'),
     },
     frame: false,
@@ -103,6 +131,10 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
+  ipcMain.handle('loadAppData', () => {
+    return loadData();
+  });
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -142,6 +174,6 @@ ipcMain.handle('readFile', async (event, filePath) => {
 function loadFolder (browserWindow, selectedFolderPath) {
   console.log('Selected folder:', selectedFolderPath);
   preferencesData.folderLocation = selectedFolderPath;
-  fs.writeFileSync('preferences.json', JSON.stringify(preferencesData, null, 2));
+  saveAppData();
   browserWindow.loadFile('index.html');
 }
