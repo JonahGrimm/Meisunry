@@ -1,7 +1,7 @@
 {
-  "name": "meisunry",
+  "name": "Meisunry",
   "version": "1.0.0",
-  "description": "A masonry photo viewer",
+  "description": "A masonry image viewer",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
@@ -30,6 +30,10 @@
       "x64",
       "ia32"
     ]
+  },
+  "build": {
+    "win": {
+      "icon": "/app-icons/logo.ico"
+    }
   }
-  
 }
