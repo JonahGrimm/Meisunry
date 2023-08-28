@@ -46,6 +46,8 @@ function readFile() {
       const cached_files = [...input_files];
   
       noItemsEl = document.getElementById(`no-items-text`);
+      headerPathEl = document.getElementById(`header-folder-path`);
+      headerPathEl.innerHTML = preferencesData.folderLocation;
       if (cached_files.length == 0)
       {
         noItemsEl.classList.add("show");

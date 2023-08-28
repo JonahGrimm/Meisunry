@@ -88,12 +88,29 @@
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+  min-height: calc(100vh - 100px);
 }
-#drop-zone {
-  height: 100%;
-  width: 100%;
+#grid-overlay {
+  transition: 0.5s ease-in-out;
+  z-index: 1;
+  pointer-events: none;
+  min-height: calc(100vh - 100px);
+  top: 100px;
   position: absolute;
-  top: 0;
+  width: 100%;
+  background-color: rgba(0, 255, 255, 0.8);
+  opacity: 0;
+  display: block;
+  text-align: center;
+}
+#grid-overlay > div {
+  margin-top: 43vh;
+  font-size: 128px;
+  color: white;
+  font-weight: bold;
+}
+#grid-overlay.draghover {
+  opacity: 1;
 }
 .grid-item {
 }
@@ -129,6 +146,11 @@ body {
   background: #2C313C;
 }
 
+/* HEADER */
+.header-browsing-text {
+  font-size: 42px;
+  font-style: italic;
+}
 .mainApp {
   display: flex;
   overflow-y: hidden;
