@@ -89,6 +89,12 @@
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+#drop-zone {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+}
 .grid-item {
 }
 .grid-image.show {
