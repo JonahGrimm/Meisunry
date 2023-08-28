@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (item.kind === 'string' && item.type === 'text/uri-list') {
         item.getAsString((url) => { 
           console.log(`${url}`); 
-          if (isImageUrl(url)) console.log(`yes it's an image.`);
+          
         });
       }
     }
@@ -43,9 +43,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-function isImageUrl(url) {
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', 'jfif', 'webp'];
-  const lowerCaseUrl = url.toLowerCase();
-  return imageExtensions.some(extension => lowerCaseUrl.endsWith(extension));
-}

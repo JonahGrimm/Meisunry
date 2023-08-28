@@ -96,9 +96,9 @@
   pointer-events: none;
   min-height: calc(100vh - 100px);
   top: 100px;
-  position: absolute;
+  position: fixed;
   width: 100%;
-  background-color: rgba(0, 255, 255, 0.8);
+  background-color: #05224ded;
   opacity: 0;
   display: block;
   text-align: center;
