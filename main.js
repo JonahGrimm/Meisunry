@@ -131,11 +131,34 @@ function createWindow() {
   });
 }
 
+function truncateFilePathToNearestFolder(filePath) {
+  const lastDotIndex = filePath.lastIndexOf('.');
+
+  if (filePath.toLowerCase().includes("meisunry")) return "";
+  
+  if (lastDotIndex !== -1) {
+    // If a dot (.) is found (indicating a file extension),
+    // find the last directory separator (slash or backslash)
+    const lastSeparatorIndex = filePath.lastIndexOf('/');
+    if (lastSeparatorIndex === -1) {
+      const lastBackslashIndex = filePath.lastIndexOf('\\');
+      if (lastBackslashIndex !== -1) {
+        return filePath.substring(0, lastBackslashIndex + 1);
+      }
+    } else {
+      return filePath.substring(0, lastSeparatorIndex + 1);
+    }
+  }
+  
+  // If no file extension or directory separators are found, return the original path
+  return filePath;
+}
+
 app.whenReady().then(() => {
   
   // Access command-line arguments using process.argv
   const args = process.argv;
-  arg = args[args.length - 1];
+  arg = truncateFilePathToNearestFolder(args[args.length - 1]);
   if (arg != null) 
   {
     // Check if the path exists
