@@ -124,10 +124,20 @@ function createWindow() {
     else
       mainWindow.maximize();
   });
+  mainWindow.on('enter-full-screen', () => {
+    mainWindow.webContents.send('enter-full-screen'); 
+  });
+  mainWindow.on('leave-full-screen', () => {
+    mainWindow.webContents.send('leave-full-screen'); 
+  });
 
   /* Handler for when folder is dropped */
   ipcMain.on('folderDropped', (event, folder) => {
     loadFolder(mainWindow, folder);
+  });
+
+  ipcMain.handle('getIsFullscreen', () => {
+    return mainWindow.isFullScreen();
   });
 }
 

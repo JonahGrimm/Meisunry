@@ -243,3 +243,14 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* FULL SCREEN ADJUSTMENTS */
+#header.full-screen {
+  display: none;
+}
+.grid-wrapper.full-screen {
+  margin-top: 0px;
+}
+.grid-overlay.full-screen {
+  top: 0px;
+}
