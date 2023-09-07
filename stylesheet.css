@@ -248,9 +248,9 @@ body {
 #header.full-screen {
   display: none;
 }
-.grid-wrapper.full-screen {
+#grid-wrapper.full-screen {
   margin-top: 0px;
 }
-.grid-overlay.full-screen {
+#grid-overlay.full-screen {
   top: 0px;
 }
