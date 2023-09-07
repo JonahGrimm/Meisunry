@@ -134,16 +134,17 @@ function createWindow() {
 app.whenReady().then(() => {
   
   // Access command-line arguments using process.argv
-  const args = process.argv.slice(2); // The first two arguments are node and the script file
-  if (args[0] != null) 
+  const args = process.argv;
+  arg = args[args.length - 1];
+  if (arg != null) 
   {
     // Check if the path exists
-    fs.access(args[0], fs.constants.F_OK, (err) => {
+    fs.access(arg, fs.constants.F_OK, (err) => {
       if (err) {
-        console.error(`The path ${args[0]} does not exist.`);
+        console.error(`The path ${arg} does not exist.`);
       } else {
         // Convert to the desired format for json serialization
-        const convertedPath = args[0].replace(/\//g, '\\');
+        const convertedPath = arg.replace(/\//g, '\\');
         preferencesData.folderLocation = convertedPath;
         saveAppData();
       }
