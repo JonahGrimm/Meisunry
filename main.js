@@ -66,6 +66,7 @@ contextMenu({
         const options = {
           title: 'Select a Folder',
           properties: ['openDirectory'],
+          defaultPath: preferencesData.folderLocation, // Format must be... `C:\\Grimm Tales\\`
         };
         dialog.showOpenDialog(browserWindow, options)
           .then(result => {
@@ -131,6 +132,24 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  
+  // Access command-line arguments using process.argv
+  const args = process.argv.slice(2); // The first two arguments are node and the script file
+  if (args[0] != null) 
+  {
+    // Check if the path exists
+    fs.access(args[0], fs.constants.F_OK, (err) => {
+      if (err) {
+        console.error(`The path ${args[0]} does not exist.`);
+      } else {
+        // Convert to the desired format for json serialization
+        const convertedPath = args[0].replace(/\//g, '\\');
+        preferencesData.folderLocation = convertedPath;
+        saveAppData();
+      }
+    });
+  }
+
   createWindow();
 
   ipcMain.handle('loadAppData', () => {
