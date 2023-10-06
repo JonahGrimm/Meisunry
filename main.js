@@ -41,19 +41,59 @@ contextMenu({
       submenu: [
       {
         click: () => { 
-          preferencesData.sortMode = 'date';
+          preferencesData.sortMode = 'newest';
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Date'
+        label: 'Newest'
+      },
+      {
+        click: () => { 
+          preferencesData.sortMode = 'oldest';
+          saveAppData();
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Oldest'
       },
       {
         click: () =>  { 
-          preferencesData.sortMode = 'name';
+          preferencesData.sortMode = 'name-a';
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Name'
+        label: 'Name A->Z'
+      },
+      {
+        click: () =>  { 
+          preferencesData.sortMode = 'name-z';
+          saveAppData();
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Name Z->A'
+      },
+      {
+        click: () =>  { 
+          preferencesData.sortMode = 'type-a';
+          saveAppData();
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Type A->Z'
+      },
+      {
+        click: () =>  { 
+          preferencesData.sortMode = 'type-z';
+          saveAppData();
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Type Z->A'
+      },
+      {
+        click: () =>  { 
+          preferencesData.sortMode = 'random';
+          saveAppData();
+          browserWindow.webContents.send('sort-update'); 
+        },
+        label: 'Random'
       },
       ]
     },
