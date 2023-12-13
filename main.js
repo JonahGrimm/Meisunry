@@ -2,6 +2,7 @@ const { shell, app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const contextMenu = require('electron-context-menu');
+const { clipboard } = require('electron');
 
 function saveAppData() {
   const userDataPath = app.getPath('userData');
@@ -35,7 +36,9 @@ function loadData() {
 const preferencesData = loadData();
 
 contextMenu({
-    prepend: (defaultActions, parameters, browserWindow) => [
+    prepend: (defaultActions, parameters, browserWindow) => { 
+      const hasImage = !(parameters.srcURL === null || parameters.srcURL === '');
+    return [
     {
       label: 'Sort By',
       type: 'submenu',
@@ -232,6 +235,16 @@ contextMenu({
 
       }
     },
+    {
+      label: `Copy Image Path`,
+      visible: hasImage,
+      type: 'checkbox',
+      click: () => {
+        // Action to copy the image path to clipboard
+        const imagePath = parameters.srcURL.replace("file:///", ""); // Get the image source URL
+        clipboard.writeText(imagePath); // Copy the image path to clipboard
+      }
+    },
 		/*{
 			label: `Search Google for ${parameters.srcURL.replace("file:///", "")}`,
 			// Only show it when right-clicking text
@@ -241,9 +254,10 @@ contextMenu({
 				shell.openExternal(`https://lens.google.com/uploadbyurl?url=${encodeURIComponent(url)}`);
 			}
 		}*/
-	],
+	]
+  },
   showSelectAll: false,
-	showSaveImageAs: false,
+  showSaveImageAs: false,
   showInspectElement: false,
 });
 

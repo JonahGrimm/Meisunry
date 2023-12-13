@@ -42,7 +42,7 @@
   bottom: 0;
   right: 0px;
   font-size: 75pt;
-  z-index: 1;
+  z-index: 10;
   width: auto;
   display: flex;
   background-color: #1B1D23;
@@ -92,7 +92,7 @@
 }
 #grid-overlay {
   transition: 0.5s ease-in-out;
-  z-index: 2;
+  z-index: 4;
   pointer-events: none;
   min-height: calc(100vh - 100px);
   top: 100px;
@@ -158,7 +158,8 @@ body {
   display: inline-block;
   vertical-align: baseline; 
   text-align: right;
-  width: inherit;
+  width: fit-content;
+  min-width: fit-content;
 }
 .header-browsing-text {
   font-size: 48px;
@@ -260,6 +261,14 @@ body {
 }
 #grid-overlay.full-screen {
   top: 0px;
+}
+#img-focus-wrapper.full-screen {
+  min-height: 100% !important;
+  margin-top: 0 !important;
+}
+#img-focus-wrapper.full-screen > #img-focus {
+  max-height: 98% !important;
+  transform: none !important;
 }
 
 /* Image focus */
