@@ -3,6 +3,9 @@ const ipcRend = window.ipcRenderer;
 
 const imageGrid = document.getElementById('imageGrid');
 
+// Image focus exiting
+const focusImg = document.getElementById('img-focus');
+
 let preferencesData;
 function updatePreferencesData(callback) {
   /* Request our data */
@@ -68,6 +71,18 @@ function readFile() {
         imgElement.src = imgPath;
         imgElement.id = `${file.name}`;
         imgElement.className = "grid-image";
+
+        // Add full screen click event
+        imgElement.addEventListener('click', () => {
+          if (focusImg.parentNode.classList.contains('show')) 
+          {
+            focusImg.parentNode.classList.remove('show');
+            return;
+          }
+          // You can perform operations on the clickedImage here
+          focusImg.parentNode.classList.add('show');
+          focusImg.src = imgPath;
+        });
   
         // Create div element
         const gridItem = document.createElement('div');
