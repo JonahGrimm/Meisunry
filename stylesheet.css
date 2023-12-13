@@ -31,12 +31,12 @@
 }
 
 
-/* DONE POP UP */
+/* POP UPs */
 @keyframes fade {
   0%,100% { opacity: 0 }
   50% { opacity: 1 }
 }
-#done-pop-up {
+.pop-up {
   opacity: 0;
   position: fixed;
   bottom: 0;
@@ -55,10 +55,10 @@
   justify-content: center;
   height: 200px;
 }
-#done-pop-up.p {
+.pop-up.p {
   margin-right: 15px;
 }
-#done-pop-up.show {
+.pop-up.show {
   animation: fade 2s ease-in-out;
 }
 .check {
@@ -74,6 +74,15 @@
   cursor: pointer;
   background-size: contain;
   background-image: url('./app-icons/check.png');
+}
+#copied-url {
+  font-size: 50px;
+  transform: translate(0px, -5px) !important;
+  display: inline-block;
+}
+#copy-pop-up > p {
+  font-size: 65px;
+  margin-right: 25px;
 }
 
 

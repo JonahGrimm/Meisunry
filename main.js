@@ -243,6 +243,7 @@ contextMenu({
         // Action to copy the image path to clipboard
         const imagePath = parameters.srcURL.replace("file:///", ""); // Get the image source URL
         clipboard.writeText(imagePath); // Copy the image path to clipboard
+        browserWindow.webContents.send('flash-copied', imagePath); 
       }
     },
 		/*{
