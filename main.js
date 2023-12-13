@@ -241,7 +241,7 @@ contextMenu({
       type: 'checkbox',
       click: () => {
         // Action to copy the image path to clipboard
-        const imagePath = parameters.srcURL.replace("file:///", "").replace("%20", " "); // Get the image source URL
+        const imagePath = parameters.srcURL.replace("file:///", "").replace(/%20/g, ' '); // Get the image source URL
         clipboard.writeText(imagePath); // Copy the image path to clipboard
         browserWindow.webContents.send('flash-copied', imagePath); 
       }

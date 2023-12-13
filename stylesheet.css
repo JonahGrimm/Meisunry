@@ -34,7 +34,7 @@
 /* POP UPs */
 @keyframes fade {
   0%,100% { opacity: 0 }
-  40%,60% { opacity: 1 }
+  35%,65% { opacity: 1 }
 }
 .pop-up {
   opacity: 0;
