@@ -34,7 +34,7 @@
 /* POP UPs */
 @keyframes fade {
   0%,100% { opacity: 0 }
-  50% { opacity: 1 }
+  40%,60% { opacity: 1 }
 }
 .pop-up {
   opacity: 0;
@@ -59,7 +59,7 @@
   margin-right: 15px;
 }
 .pop-up.show {
-  animation: fade 2s ease-in-out;
+  animation: fade 2.5s ease-in-out;
 }
 .check {
   width: 125px;
