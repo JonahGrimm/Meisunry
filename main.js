@@ -305,31 +305,26 @@ ipcMain.handle('readFile', async (event, filePath) => {
   const updatedFileList = [];
   try {
 
-    recursionDepth = 0;
-    await addFolderToList(filePath);
+    await addFolderToList(filePath, 0);
     
-    async function addFolderToList(targetFolderPath) {
+    async function addFolderToList(targetFolderPath, depth) {
         // Add contents of current folder to final list
         files = await fs.promises.readdir(targetFolderPath);
         await pushFilteredFilesToList(files, targetFolderPath);
         // If our depth allows it, scan the current folder and recurse
-        recursionDepth++;
-        if (recursionDepth <= preferencesData.recursion)
+        depth++;
+        if (depth <= preferencesData.recursion)
         {
-            console.log('here');
-
             // Find directories
             const folders = files.filter(item => {
                 const itemPath = path.join(targetFolderPath, item);
                 return fs.statSync(itemPath).isDirectory();
             });
 
-            console.log(folders);
-
             for (const index in folders) {
                 var nestedFolder = path.join(targetFolderPath, folders[index]);
                 console.log(nestedFolder);
-                await addFolderToList(nestedFolder);
+                await addFolderToList(nestedFolder, depth);
             }
         }
     }
