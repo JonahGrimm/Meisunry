@@ -164,6 +164,7 @@ body {
   font-size: 48px;
   font-style: italic;
   transform: translate(0px, 5px);
+  width: inherit;
 }
 .mainApp {
   display: flex;

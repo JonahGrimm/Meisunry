@@ -157,6 +157,56 @@ contextMenu({
           type: 'checkbox',
           checked: preferencesData.recursion == 3,
         },
+        {
+          click: () => { 
+            preferencesData.recursion = 4;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '4 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 4,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 5;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '5 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 5,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 6;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '6 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 6,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 7;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '7 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 7,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 8;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '8 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 8,
+        },
       ]
     },
     {
