@@ -22,7 +22,8 @@ function loadData() {
     /* Default json */
     const baseData = {
       folderLocation: "C:\\",
-      sortMode: "date"
+      sortMode: "date",
+      recursion: 0,
     }
     const serializedData = JSON.stringify(baseData, null, 2);
     fs.writeFileSync(dataFilePath, serializedData);
@@ -45,7 +46,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Newest'
+        label: 'Newest',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'newest',
       },
       {
         click: () => { 
@@ -53,7 +56,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Oldest'
+        label: 'Oldest',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'oldest',
       },
       {
         click: () =>  { 
@@ -61,7 +66,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Name A->Z'
+        label: 'Name A->Z',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'name-a',
       },
       {
         click: () =>  { 
@@ -69,7 +76,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Name Z->A'
+        label: 'Name Z->A',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'name-z',
       },
       {
         click: () =>  { 
@@ -77,7 +86,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Type A->Z'
+        label: 'Type A->Z',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'type-a',
       },
       {
         click: () =>  { 
@@ -85,7 +96,9 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Type Z->A'
+        label: 'Type Z->A',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'type-z',
       },
       {
         click: () =>  { 
@@ -93,11 +106,59 @@ contextMenu({
           saveAppData();
           browserWindow.webContents.send('sort-update'); 
         },
-        label: 'Random'
+        label: 'Random',
+        type: 'checkbox',
+        checked: preferencesData.sortMode == 'random',
       },
       ]
     },
 
+    {
+      label: `Set Recursion Depth`,
+      type: 'submenu',
+      submenu: [
+        {
+          click: () => { 
+            preferencesData.recursion = 0;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: 'No recursion',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 0,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 1;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '1 Folder Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 1,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 2;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '2 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 2,
+        },
+        {
+          click: () => { 
+            preferencesData.recursion = 3;
+            saveAppData();
+            browserWindow.loadFile('index.html');
+          },
+          label: '3 Folders Deep',
+          type: 'checkbox',
+          checked: preferencesData.recursion == 3,
+        },
+      ]
+    },
     {
       label: `Choose Folder...`,
       // Only show it when right-clicking text
@@ -243,21 +304,55 @@ ipcMain.handle('readFile', async (event, filePath) => {
   // Assuming fileList is an array of file names without dates
   const updatedFileList = [];
   try {
-    files = await fs.promises.readdir(filePath);
-    files = files.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp)$/i));
-    for (const filename of files) {
-      const fullFilePath = path.join(filePath, filename);
-  
-      try {
-        const stats = await fs.promises.stat(fullFilePath);
-        const fileDate = stats.mtime; // Modification date of the file
-  
-        updatedFileList.push({ name: filename, date: fileDate });
-      } catch (error) {
-        console.error(`Error reading file: ${filename}`);
+
+    recursionDepth = 0;
+    await addFolderToList(filePath);
+    
+    async function addFolderToList(targetFolderPath) {
+        // Add contents of current folder to final list
+        files = await fs.promises.readdir(targetFolderPath);
+        await pushFilteredFilesToList(files, targetFolderPath);
+        // If our depth allows it, scan the current folder and recurse
+        recursionDepth++;
+        if (recursionDepth <= preferencesData.recursion)
+        {
+            console.log('here');
+
+            // Find directories
+            const folders = files.filter(item => {
+                const itemPath = path.join(targetFolderPath, item);
+                return fs.statSync(itemPath).isDirectory();
+            });
+
+            console.log(folders);
+
+            for (const index in folders) {
+                var nestedFolder = path.join(targetFolderPath, folders[index]);
+                console.log(nestedFolder);
+                await addFolderToList(nestedFolder);
+            }
+        }
+    }
+
+    // Push filtered file group to final list 
+    async function pushFilteredFilesToList(targetFiles, targetFilePath) {
+      targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp)$/i));
+      for (const filename of targetFiles) {
+        const fullFilePath = path.join(targetFilePath, filename);
+    
+        try {
+          const stats = await fs.promises.stat(fullFilePath);
+          const fileDate = stats.mtime; // Modification date of the file
+    
+          updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath });
+        } catch (error) {
+          console.error(`Error reading file: ${filename}`);
+        }
       }
     }
+
     // Sorting the fileList array by date
+    console.log('here final');
     updatedFileList.sort((a, b) => b.date - a.date);
     return updatedFileList;
   } catch (error) {

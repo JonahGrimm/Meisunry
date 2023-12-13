@@ -49,6 +49,8 @@ function readFile() {
       const cached_files = [...input_files];
   
       noItemsEl = document.getElementById(`no-items-text`);
+      imgCountEl = document.getElementById(`header-image-count`);
+      imgCountEl.innerHTML = `${files.length} Images`;
       headerPathEl = document.getElementById(`header-folder-path`);
       headerPathEl.innerHTML = preferencesData.folderLocation;
       if (cached_files.length == 0)
@@ -66,7 +68,7 @@ function readFile() {
         if (existingEl != null) continue;
   
         // Create img element
-        const imgPath = `${preferencesData.folderLocation}/${file.name}`;
+        const imgPath = file.fullPath;
         const imgElement = document.createElement('img');
         imgElement.src = imgPath;
         imgElement.id = `${file.name}`;

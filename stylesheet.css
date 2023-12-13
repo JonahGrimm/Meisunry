@@ -147,9 +147,23 @@ body {
 }
 
 /* HEADER */
+.title {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 15px;
+  width: 100%;
+  line-height: 5px;
+}
+.right-top-bar {
+  display: inline-block;
+  vertical-align: baseline; 
+  text-align: right;
+  width: inherit;
+}
 .header-browsing-text {
-  font-size: 42px;
+  font-size: 48px;
   font-style: italic;
+  transform: translate(0px, 5px);
 }
 .mainApp {
   display: flex;
@@ -190,14 +204,6 @@ body {
 }
 .titleBar > img{
   margin-left: 10px;
-}
-.titleBar > .title {
-  margin-left: 10px;
-  width: 100%;
-  line-height: 30px;
-  margin-top: 5px;
-  padding-bottom: 5px;
-  -webkit-app-region: drag;
 }
 
 .topBar > .titleBarBtns{
