@@ -2,9 +2,9 @@
   "name": "Meisunry",
   "version": "1.0.5",
   "description": "A masonry image viewer",
-  "main": "main.js",
+  "main": "/mains/main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron mains/main.js"
   },
   "author": "Jonah Grimm",
   "license": "MIT",

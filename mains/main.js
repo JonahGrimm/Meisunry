@@ -124,7 +124,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 0;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: 'No recursion',
           type: 'checkbox',
@@ -134,7 +134,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 1;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '1 Folder Deep',
           type: 'checkbox',
@@ -144,7 +144,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 2;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '2 Folders Deep',
           type: 'checkbox',
@@ -154,7 +154,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 3;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '3 Folders Deep',
           type: 'checkbox',
@@ -164,7 +164,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 4;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '4 Folders Deep',
           type: 'checkbox',
@@ -174,7 +174,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 5;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '5 Folders Deep',
           type: 'checkbox',
@@ -184,7 +184,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 6;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '6 Folders Deep',
           type: 'checkbox',
@@ -194,7 +194,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 7;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '7 Folders Deep',
           type: 'checkbox',
@@ -204,7 +204,7 @@ contextMenu({
           click: () => { 
             preferencesData.recursion = 8;
             saveAppData();
-            browserWindow.loadFile('index.html');
+            browserWindow.loadFile('../renderers/index.html');
           },
           label: '8 Folders Deep',
           type: 'checkbox',
@@ -275,7 +275,7 @@ function createWindow() {
     frame: false,
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile('../renderers/index.html');
 
   /* Functions for handling window min/max/close */
   ipcMain.on('closeApp', () => {
@@ -412,7 +412,6 @@ ipcMain.handle('readFile', async (event, filePath) => {
     }
 
     // Sorting the fileList array by date
-    console.log('here final');
     updatedFileList.sort((a, b) => b.date - a.date);
     return updatedFileList;
   } catch (error) {
@@ -424,5 +423,5 @@ function loadFolder (browserWindow, selectedFolderPath) {
   console.log('Selected folder:', selectedFolderPath);
   preferencesData.folderLocation = selectedFolderPath;
   saveAppData();
-  browserWindow.loadFile('index.html');
+  browserWindow.loadFile('../renderers/index.html');
 }
