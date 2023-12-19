@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { loadFolder, saveAppData, truncateFilePathToNearestFolder, loadData } = require('./main-functions');
+const { loadFolder, saveAppData, truncateFilePathToNearestFolder, loadData, loadIndex } = require('./main-functions');
 
 global.preferencesData = loadData();
 
@@ -18,7 +18,7 @@ function createWindow() {
     frame: false,
   });
 
-  mainWindow.loadFile('../renderers/index.html');
+  loadIndex(mainWindow);
 
   /* Functions for handling window min/max/close */
   ipcMain.on('closeApp', () => {
@@ -80,7 +80,6 @@ app.whenReady().then(() => {
   arg = truncateFilePathToNearestFolder(args[args.length - 1]);
   if (arg != null) 
   {
-    console.log(arg);
     // Check if the path exists
     fs.access(arg, fs.constants.F_OK, (err) => {
       if (err) {

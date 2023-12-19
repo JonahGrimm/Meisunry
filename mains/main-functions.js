@@ -38,13 +38,13 @@ function loadFolder (browserWindow, selectedFolderPath) {
   console.log('Selected folder:', selectedFolderPath);
   global.preferencesData.folderLocation = selectedFolderPath;
   saveAppData();
-  browserWindow.loadFile('../renderers/index.html');
+  loadIndex(browserWindow);
 }
 
 function truncateFilePathToNearestFolder(filePath) {
   const lastDotIndex = filePath.lastIndexOf('.');
   
-  if (filePath === `mains/main.js`) return global.preferencesData.folderLocation;
+  if (filePath === `./mains/main.js`) return global.preferencesData.folderLocation;
   
   if (lastDotIndex !== -1) {
     // If a dot (.) is found (indicating a file extension),
@@ -63,4 +63,9 @@ function truncateFilePathToNearestFolder(filePath) {
   // If no file extension or directory separators are found, return the original path
   return filePath;
 }
-module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData };
+
+function loadIndex(browserWindow) {
+  const parentDir = path.join(__dirname, '..');
+  browserWindow.loadURL(`file://${parentDir}/renderers/index.html`);
+}
+module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData, loadIndex };

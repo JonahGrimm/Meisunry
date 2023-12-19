@@ -1,7 +1,7 @@
 const contextMenu = require('electron-context-menu');
 const { app, clipboard, dialog, shell } = require('electron');
 const fs = require('fs');
-const { loadFolder, saveAppData, loadData } = require('./main-functions');
+const { loadFolder, saveAppData, loadData, loadIndex } = require('./main-functions');
 let trash;
 import('trash').then((trashModule) => { trash = trashModule.default || trashModule; });
 
@@ -94,7 +94,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 0;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: 'No recursion',
         type: 'checkbox',
@@ -104,7 +104,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 1;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '1 Folder Deep',
         type: 'checkbox',
@@ -114,7 +114,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 2;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '2 Folders Deep',
         type: 'checkbox',
@@ -124,7 +124,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 3;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '3 Folders Deep',
         type: 'checkbox',
@@ -134,7 +134,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 4;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '4 Folders Deep',
         type: 'checkbox',
@@ -144,7 +144,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 5;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '5 Folders Deep',
         type: 'checkbox',
@@ -154,7 +154,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 6;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '6 Folders Deep',
         type: 'checkbox',
@@ -164,7 +164,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 7;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '7 Folders Deep',
         type: 'checkbox',
@@ -174,7 +174,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 8;
           saveAppData();
-          browserWindow.loadFile('../renderers/index.html');
+          loadIndex(browserWindow);
         },
         label: '8 Folders Deep',
         type: 'checkbox',
