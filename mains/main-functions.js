@@ -44,7 +44,7 @@ function loadFolder (browserWindow, selectedFolderPath) {
 function truncateFilePathToNearestFolder(filePath) {
   const lastDotIndex = filePath.lastIndexOf('.');
   
-  if (filePath === `./mains/main.js`) return global.preferencesData.folderLocation;
+  if (filePath === `./mains/main.js` || filePath.toLowerCase().includes("meisunry")) return global.preferencesData.folderLocation;
   
   if (lastDotIndex !== -1) {
     // If a dot (.) is found (indicating a file extension),
