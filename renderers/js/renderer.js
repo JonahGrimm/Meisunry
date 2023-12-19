@@ -57,6 +57,55 @@ function setupImagesInGrid() {
         grid.layout();
       }, 500));
     })
+
+    window.electronAPI.onFileAdded((event, newFile) => {
+      /* Add to files list */
+      files.push(newFile);
+      /* Update image count on topbar */
+      imgCountEl = document.getElementById(`header-image-count`);
+      imgCountEl.innerHTML = `${files.length} Images`;
+      /* Append */
+      addImage(newFile);
+      /* Resort */
+      files = resort(files);
+      handle_resort(files);
+    })
+
+    function addImage(file) {
+      // Only generate a new element and append it if it doesn't already exist
+      const existingEl = document.getElementById(`${file.fullPath}`);
+      if (existingEl != null) return;
+
+      // Create img element
+      const imgPath = file.fullPath;
+      const imgElement = document.createElement('img');
+      imgElement.src = imgPath;
+      imgElement.id = imgPath;
+      imgElement.className = "grid-image";
+
+      // Add full screen click event
+      imgElement.addEventListener('click', () => {
+        if (focusImg.parentNode.classList.contains('show')) 
+        {
+          focusImg.parentNode.classList.remove('show');
+          return;
+        }
+        // You can perform operations on the clickedImage here
+        focusImg.parentNode.classList.add('show');
+        focusImg.src = imgPath;
+      });
+
+      // Create div element
+      const gridItem = document.createElement('div');
+      gridItem.className = 'grid-item';
+      gridItem.appendChild(imgElement);
+
+      // Add to grid
+      imageGrid.appendChild(gridItem);
+      grid.appended(gridItem);
+      grid.reloadItems();
+      grid.layout();
+    }
   
     // Lazy loads images. Does so with a bit of a delays
     async function loadImages(input_files) {
@@ -78,39 +127,7 @@ function setupImagesInGrid() {
       noItemsEl.classList.remove("show");
   
       for (const file of cached_files) {
-        // Only generate a new element and append it if it doesn't already exist
-        const existingEl = document.getElementById(`${file.name}`);
-        if (existingEl != null) continue;
-  
-        // Create img element
-        const imgPath = file.fullPath;
-        const imgElement = document.createElement('img');
-        imgElement.src = imgPath;
-        imgElement.id = imgPath;
-        imgElement.className = "grid-image";
-
-        // Add full screen click event
-        imgElement.addEventListener('click', () => {
-          if (focusImg.parentNode.classList.contains('show')) 
-          {
-            focusImg.parentNode.classList.remove('show');
-            return;
-          }
-          // You can perform operations on the clickedImage here
-          focusImg.parentNode.classList.add('show');
-          focusImg.src = imgPath;
-        });
-  
-        // Create div element
-        const gridItem = document.createElement('div');
-        gridItem.className = 'grid-item';
-        gridItem.appendChild(imgElement);
-  
-        // Add to grid
-        imageGrid.appendChild(gridItem);
-        grid.appended(gridItem);
-        grid.reloadItems();
-        grid.layout();
+        addImage(file);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       // Show done pop up
@@ -246,7 +263,7 @@ function sortByExtension(a, b) {
 
 function handle_resort(cached_files) {
   cached_files.reverse().forEach(file => {
-    const imgElement = document.getElementById(`${file.name}`);
+    const imgElement = document.getElementById(`${file.fullPath}`);
     if (imgElement == null) return;
     const divElement = imgElement.parentElement;
     const parentElement = divElement.parentElement;

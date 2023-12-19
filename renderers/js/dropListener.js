@@ -40,6 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('folderDropped', currentFile.path);
         break;
       }
+      if (endsWithImageExtension(currentFile.path)) {
+        ipcRenderer.send('imageDropped', currentFile.path);
+        break;
+      }
     }
   });
 });
+
+function endsWithImageExtension(filename) {
+  return (
+    filename.endsWith('.jpg') ||
+    filename.endsWith('.jpeg') ||
+    filename.endsWith('.png') ||
+    filename.endsWith('.gif') ||
+    filename.endsWith('.jfif') ||
+    filename.endsWith('.webp')
+  );
+}

@@ -45,6 +45,29 @@ function createWindow() {
     loadFolder(mainWindow, folder);
   });
 
+  /* Handler for when image is dropped. Relocates file from one folder to another. */
+  ipcMain.on('imageDropped', async (event, imagePath) => {
+    const destinationFilePath = path.join(global.preferencesData.folderLocation, path.basename(imagePath));
+
+    if (fs.existsSync(destinationFilePath)) return;
+
+    fs.rename(imagePath, destinationFilePath, async (err) => {
+      if (!err) {
+        console.log(`Moved file to ${destinationFilePath}`);
+        try {
+          const stats = await fs.promises.stat(destinationFilePath);
+          const fileDate = stats.mtime; // Modification date of the file
+          const newImageFile = { name: path.basename(destinationFilePath), date: fileDate, fullPath: destinationFilePath };
+          mainWindow.webContents.send('added-file', newImageFile); 
+        } catch (error) {
+          console.error(`Error reading file: ${filename}`);
+        }
+      } else {
+        console.log(`Move file error ${err}`);
+      }
+    });
+  });
+
   ipcMain.handle('getIsFullscreen', () => {
     return mainWindow.isFullScreen();
   });
