@@ -111,11 +111,6 @@ app.whenReady().then(() => {
   });
 });
 
-/* Close when window-all-closed */
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
-});
-
 ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
   // Assuming fileList is an array of file names without dates
   const updatedFileList = [];
@@ -168,6 +163,16 @@ ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
   } catch (error) {
     throw error;
   }
+});
+
+/* Close when window-all-closed */
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+// When the app is about to quit, unregister all shortcuts
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 });
 
 const contextMenuJS = require('./context-menu');
