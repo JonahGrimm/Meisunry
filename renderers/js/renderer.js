@@ -1,26 +1,23 @@
-// renderer.js
 const ipcRend = window.ipcRenderer;
-
 const imageGrid = document.getElementById('imageGrid');
-
-// Image focus exiting
 const focusImg = document.getElementById('img-focus');
 
+// Set up preferences data
 let preferencesData;
 function updatePreferencesData(callback) {
   /* Request our data */
   ipcRend.invoke('loadAppData').then(data => { preferencesData = data; callback(); });
 }
-updatePreferencesData(readFile);
+updatePreferencesData(setupImagesInGrid);
 
 currentZoom = 1;
 currentPadding = .98;
 
+// Initialization
 let grid;
 let resortAfterImageLoad;
-
-function readFile() {
-  ipcRend.invoke('readFile', preferencesData.folderLocation).then(files => {
+function setupImagesInGrid() {
+  ipcRend.invoke('readFilesFromDisk', preferencesData.folderLocation).then(files => {
     console.log(`${preferencesData.folderLocation}`);
   
     resortAfterImageLoad = false;
@@ -152,6 +149,7 @@ function readFile() {
   });
 }
 
+/* Sorting and updating */
 
 function update_images() {
   const gridItems = document.querySelectorAll('.grid-image');
