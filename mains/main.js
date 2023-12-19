@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { loadFolder, saveAppData, truncateFilePathToNearestFolder, loadData, loadIndex } = require('./main-functions');
@@ -71,6 +71,8 @@ function createWindow() {
   ipcMain.handle('getIsFullscreen', () => {
     return mainWindow.isFullScreen();
   });
+
+  return mainWindow;
 }
 
 app.whenReady().then(() => {
@@ -93,7 +95,12 @@ app.whenReady().then(() => {
     });
   }
 
-  createWindow();
+  var browserWindow = createWindow();
+
+  globalShortcut.register('Escape', () => {
+    browserWindow.webContents.send('hide-focus-img');
+  });
+
 
   ipcMain.handle('loadAppData', () => {
     return loadData();

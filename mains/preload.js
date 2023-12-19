@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onDataLoaded: (callback) => ipcRenderer.on('on-data-loaded', callback), // Forwards 'on-data-loaded' event from main.js to renderer.js onDataLoaded
   onEnterFullscreen: (callback) => ipcRenderer.on('enter-full-screen', callback), // Forwards 'enter-full-screen' event from main.js to renderer.js onEnterFullscreen
   onLeaveFullscreen: (callback) => ipcRenderer.on('leave-full-screen', callback), // Forwards 'leave-full-screen' event from main.js to renderer.js onLeaveFullscreen
+  onHideFocusImg: (callback) => ipcRenderer.on('hide-focus-img', callback), // Forwards 'hide-focus-img' event from main.js to renderer.js onHideFocusImg
 })
 //contextBridge.exposeInMainWorld('contextMenu', contextMenu);
