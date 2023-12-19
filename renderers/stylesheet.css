@@ -121,10 +121,16 @@
 #grid-overlay.draghover {
   opacity: 1;
 }
-.grid-item {
-}
 .grid-image.show {
   opacity: 1; /* Transition to fully opaque */
+}
+.grid-image.hide {
+  animation: fadeOut 0.5s ease-in-out !important;
+  opacity: 0;
+}
+@keyframes fadeOut {
+  0% { opacity: 1 }
+  100% { opacity: 0 }
 }
 @keyframes fadeIn {
   0% { opacity: 0 }

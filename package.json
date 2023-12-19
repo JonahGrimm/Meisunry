@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "electron-context-menu": "^3.6.1",
-    "masonry-layout": "^4.2.2"
+    "masonry-layout": "^4.2.2",
+    "trash": "^8.1.1"
   },
   "iohook": {
     "targets": [

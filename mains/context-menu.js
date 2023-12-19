@@ -1,6 +1,9 @@
 const contextMenu = require('electron-context-menu');
-const { clipboard, dialog } = require('electron');
+const { app, clipboard, dialog, shell } = require('electron');
+const fs = require('fs');
 const { loadFolder, saveAppData, loadData } = require('./main-functions');
+let trash;
+import('trash').then((trashModule) => { trash = trashModule.default || trashModule; });
 
 contextMenu({
   prepend: (defaultActions, parameters, browserWindow) => { 
@@ -211,6 +214,27 @@ contextMenu({
       const imagePath = parameters.srcURL.replace("file:///", "").replace(/%20/g, ' '); // Get the image source URL
       clipboard.writeText(imagePath); // Copy the image path to clipboard
       browserWindow.webContents.send('flash-copied', imagePath); 
+    }
+  },
+  {
+    label: `Delete Image`,
+    visible: hasImage,
+    type: 'checkbox',
+    click: () => {
+      // Action to copy the image path to clipboard
+      const imagePath = parameters.srcURL.replace("file:///", "").replace(/%20/g, ' '); // Get the image source URL
+      
+      // Check if the file exists before attempting to delete it
+      fs.access(imagePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          // File exists, proceed with deletion
+          trash([imagePath]);
+          browserWindow.webContents.send('deleted-file', imagePath); 
+          console.log(`Deleted ${imagePath}`);
+        } else {
+          console.error('File does not exist or cannot be accessed');
+        }
+      });
     }
   },
   /*{

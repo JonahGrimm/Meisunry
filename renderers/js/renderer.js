@@ -40,6 +40,24 @@ function setupImagesInGrid() {
       });
     })
   
+    window.electronAPI.onFileDeleted((event, deletedFilePath) => {
+      /* Fix file path */
+      deletedFilePath = deletedFilePath.replace(/\//g, '\\');
+      /* Reduce files list */
+      files = files.filter(file => file.fullPath !== deletedFilePath);
+      /* Update image count on topbar */
+      imgCountEl = document.getElementById(`header-image-count`);
+      imgCountEl.innerHTML = `${files.length} Images`;
+      /* Play image deletion animation and remove it from grid */
+      const deletedFile = document.getElementById(deletedFilePath);
+      deletedFile.classList.add(`hide`);
+      new Promise((resolve) => setTimeout(() => { 
+        imageGrid.removeChild(deletedFile.parentNode); 
+        grid.reloadItems();
+        grid.layout();
+      }, 500));
+    })
+  
     // Lazy loads images. Does so with a bit of a delays
     async function loadImages(input_files) {
       const delay = 5; // Delay in milliseconds
@@ -68,7 +86,7 @@ function setupImagesInGrid() {
         const imgPath = file.fullPath;
         const imgElement = document.createElement('img');
         imgElement.src = imgPath;
-        imgElement.id = `${file.name}`;
+        imgElement.id = imgPath;
         imgElement.className = "grid-image";
 
         // Add full screen click event
