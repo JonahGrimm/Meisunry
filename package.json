@@ -1,8 +1,8 @@
 {
   "name": "Meisunry",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A masonry image viewer",
-  "main": "/mains/main.js",
+  "main": "mains/main.js",
   "scripts": {
     "start": "electron mains/main.js"
   },
