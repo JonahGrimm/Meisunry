@@ -35,6 +35,7 @@
   "build": {
     "win": {
       "icon": "/app-icons/logo.ico"
-    }
+    },
+    "asar": false
   }
 }
