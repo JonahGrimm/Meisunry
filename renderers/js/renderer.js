@@ -1,6 +1,8 @@
 const ipcRend = window.ipcRenderer;
 const imageGrid = document.getElementById('imageGrid');
 const focusImg = document.getElementById('img-focus');
+const focusVideo = document.getElementById('video-focus');
+const muteButtonFocus = document.getElementById('mute-button-focus');
 
 // Set up preferences data
 let preferencesData;
@@ -76,28 +78,82 @@ function setupImagesInGrid() {
       const existingEl = document.getElementById(`${file.fullPath}`);
       if (existingEl != null) return;
 
-      // Create img element
-      const imgPath = file.fullPath;
-      const imgElement = document.createElement('img');
-      imgElement.src = imgPath;
-      imgElement.id = imgPath;
-      imgElement.className = "grid-image";
-
-      // Add full screen click event
-      imgElement.addEventListener('click', () => {
-        if (focusImg.parentNode.classList.contains('show')) 
-        {
-          focusImg.parentNode.classList.remove('show');
-          return;
-        }
-        // You can perform operations on the clickedImage here
-        focusImg.parentNode.classList.add('show');
-        focusImg.src = imgPath;
-      });
-
       // Create div element
       const gridItem = document.createElement('div');
       gridItem.className = 'grid-item';
+
+      let imgElement;
+      const imgPath = file.fullPath;
+      console.log(file.isImage);
+      if (file.isImage === true)
+      {
+        // Create img element
+        imgElement = document.createElement('img');
+        imgElement.src = imgPath;
+        imgElement.id = imgPath;
+        imgElement.className = "grid-image";
+
+        // Add full screen click event
+        imgElement.addEventListener('click', () => {
+          if (focusImg.parentNode.classList.contains('show')) 
+          {
+            focusImg.parentNode.classList.remove('show');
+            return;
+          }
+          // You can perform operations on the clickedImage here
+          focusImg.parentNode.classList.add('show');
+          focusImg.src = imgPath;
+        });
+      }
+      else
+      {
+        imgElement = document.createElement('video');
+        imgElement.autoplay = true;
+        imgElement.muted = true;
+        imgElement.loop = true;
+        imgElement.className = "grid-image";
+        const sourceElement = document.createElement(`source`);
+        sourceElement.src = imgPath;
+        sourceElement.id = imgPath;
+        imgElement.appendChild(sourceElement);
+        const audioA = document.createElement(`a`);
+        audioA.classList.add(`audio-button`);
+        gridItem.appendChild(audioA);
+
+        // Mute function
+        audioA.addEventListener('click', () => {
+          if (focusVideo.parentNode.classList.contains('show')) return;
+          imgElement.muted = !imgElement.muted;
+          if (imgElement.muted) audioA.classList.remove(`unmute`);
+          else audioA.classList.add(`unmute`);
+        });
+
+        // Add full screen click event
+        imgElement.addEventListener('click', () => {
+          if (focusVideo.parentNode.classList.contains('show')) 
+          {
+            focusVideo.parentNode.classList.remove('show');
+            return;
+          }
+          // You can perform operations on the clickedImage here
+          focusVideo.parentNode.classList.add('show');
+          focusVideo.querySelector('source').src = imgPath;
+          focusVideo.load();
+          muteButtonFocus.classList.remove(`hide`);
+          // Sync settings
+          focusVideo.currentTime = imgElement.currentTime;
+          focusVideo.muted = imgElement.muted;
+          if (focusVideo.muted) muteButtonFocus.classList.remove(`unmute`);
+          else muteButtonFocus.classList.add(`unmute`);
+          // Pause original because focus is playing
+          imgElement.muted = true;
+          imgElement.pause();
+          audioA.classList.remove(`unmute`);
+        });
+      }
+      
+
+      // Nest within div
       gridItem.appendChild(imgElement);
 
       // Add to grid

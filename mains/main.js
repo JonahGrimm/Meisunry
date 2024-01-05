@@ -12,6 +12,7 @@ function createWindow() {
     icon: 'app-icons/logo.png',
     webPreferences: {
       nodeIntegration: true,
+      audio: true,
       zoomFactor: 0.01,
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -142,15 +143,16 @@ ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
 
     // Push filtered file group to final list 
     async function pushFilteredFilesToList(targetFiles, targetFilePath) {
-      targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp)$/i));
+      targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp|mp4|webm)$/i));
+      const isImagePattern = /\.(jpg|jpeg|png|gif|jfif|webp)$/i;
       for (const filename of targetFiles) {
         const fullFilePath = path.join(targetFilePath, filename);
     
         try {
           const stats = await fs.promises.stat(fullFilePath);
           const fileDate = stats.mtime; // Modification date of the file
-    
-          updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath });
+          isImage = isImagePattern.test(filename);
+          updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath, isImage: isImage });
         } catch (error) {
           console.error(`Error reading file: ${filename}`);
         }

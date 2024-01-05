@@ -14,6 +14,30 @@
   border-radius: 910px;
 }
 
+/* Audio Button */
+.audio-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  padding: 70px;
+  z-index: 2;
+  opacity: 0;
+  transition: 0.25s;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 90px;
+  background-image: url('../app-icons/volume-mute.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;
+}
+.audio-button:hover {
+  opacity: 1;
+}
+.audio-button.unmute {
+  background-image: url('../app-icons/volume.png');
+}
 /* NO IMAGES */
 #no-items-text
 {
@@ -54,6 +78,8 @@
   align-items: center;
   justify-content: center;
   height: 200px;
+  user-select: none;
+  pointer-events: none;
 }
 .pop-up.p {
   margin-right: 15px;
@@ -304,7 +330,7 @@ body {
 #img-focus-wrapper.show {
   opacity: 1 !important;
 }
-#img-focus {
+#img-focus, #video-focus {
   z-index: 1;
   pointer-events: none;
   max-width: 98%;
@@ -321,6 +347,21 @@ body {
   object-fit: contain;
   transform: translate(0, 50px);
 }
-#img-focus-wrapper.show > #img-focus {
+#img-focus-wrapper.show > #img-focus,
+#img-focus-wrapper.show > #video-focus {
   pointer-events: all;
+}
+#mute-button-focus {
+  z-index: 1001;
+  padding: 150px;
+  background-size: 150px;
+  border-radius: 1000px;
+  pointer-events: all;
+  user-select: all;
+  position: fixed;
+}
+#mute-button-focus.hide {
+  opacity: 0 !important;
+  pointer-events: none;
+  user-select: none;
 }
