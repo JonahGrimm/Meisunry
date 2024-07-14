@@ -402,7 +402,7 @@ body {
   pointer-events: all;
   padding: 250px 450px;
   bottom: 0;
-  position: absolute;
+  position: fixed;
   z-index: 5000;
 }
 .left-focus-buttons-container {

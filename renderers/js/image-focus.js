@@ -14,9 +14,10 @@ focusVideo.addEventListener('click', () => {
 });
 
 function resetPanZoom(elemWid, elemHei) {
+  extraTopPadding = header.classList.contains('full-screen') ? 0 : 100;
   const screenSize = {
     "w": Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
-    "h": Math.max(document.documentElement.clientHeight, window.innerHeight || 0)-100
+    "h": Math.max(document.documentElement.clientHeight, window.innerHeight || 0)-extraTopPadding
   };
   let initalZoom = Math.min(screenSize.w / elemWid, screenSize.h / elemHei);
   //console.log(`img: ${elemWid} x ${elemHei} screenSize: ${screenSize.w} x ${screenSize.h} zoom: ${initalZoom}` );
