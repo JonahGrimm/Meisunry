@@ -1,6 +1,6 @@
 {
   "name": "Meisunry",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A masonry image viewer",
   "main": "./mains/main.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "dependencies": {
     "electron-context-menu": "^3.6.1",
     "masonry-layout": "^4.2.2",
+    "panzoom": "^9.4.3",
     "trash": "^8.1.1"
   },
   "iohook": {

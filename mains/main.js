@@ -19,6 +19,10 @@ function createWindow() {
     frame: false,
   });
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.setZoomFactor(.01); 
+  });
+
   loadIndex(mainWindow);
 
   /* Functions for handling window min/max/close */

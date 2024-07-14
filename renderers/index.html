@@ -27,15 +27,24 @@
         </div>
       </div>
       
-      <a id="mute-button-focus" class="audio-button hide"></a>
+      <!-- Focused element buttons -->
+      <div class="right-focus-buttons-container focus-buttons-container">
+        <a id="mute-button-focus" class="audio-button focus-button overlay-circle-button hide"></a>
+      </div>
+      <div class="left-focus-buttons-container focus-buttons-container">
+        <a id="back-button-focus" class="focus-button overlay-circle-button hide"></a>
+        <a id="reset-button-focus" class="focus-button overlay-circle-button hide"></a>
+      </div>
 
       <div id="grid-wrapper" class="grid-wrapper">
         <div id="grid-overlay"><div>Drop to select folder or add image to folder</div></div>
         <div id="img-focus-wrapper" class="">
-          <img id="img-focus" src="">
-          <video autoplay loop id="video-focus">
-            <source src="">
-          </video>
+          <div id="zoomPanHolder">
+            <img id="img-focus" src="">
+            <video autoplay loop id="video-focus">
+              <source src="">
+            </video>
+          </div>
         </div>
         <div class="grid" id="imageGrid">
       </div>
@@ -56,6 +65,7 @@
   
   <!-- Include the Masonry Layout JavaScript -->
   <script src="../node_modules/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../node_modules/panzoom/dist/panzoom.min.js"></script>
   <!-- Initialize Masonry Layout -->
   
   <script src="js/renderer.js"></script>

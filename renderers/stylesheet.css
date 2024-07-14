@@ -13,31 +13,6 @@
   background: rgb(111, 211, 222);;
   border-radius: 910px;
 }
-
-/* Audio Button */
-.audio-button {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  margin-right: 25px;
-  margin-bottom: 25px;
-  padding: 70px;
-  z-index: 2;
-  opacity: 0;
-  transition: 0.25s;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 90px;
-  background-image: url('../app-icons/volume-mute.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: auto;
-}
-.audio-button:hover {
-  opacity: 1;
-}
-.audio-button.unmute {
-  background-image: url('../app-icons/volume.png');
-}
 /* NO IMAGES */
 #no-items-text
 {
@@ -220,7 +195,7 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
 }
 
 .mainApp > .topBar {
@@ -329,8 +304,18 @@ body {
 }
 #img-focus-wrapper.show {
   opacity: 1 !important;
+  pointer-events: inherit;
 }
-#img-focus, #video-focus {
+#zoomPanHolder {
+  /*pointer-events: none;*/
+}
+.show > #zoomPanHolder {
+  /*pointer-events: inherit;*/
+}
+#img-focus {
+  z-index: 1;
+}
+#video-focus {
   z-index: 1;
   pointer-events: none;
   max-width: 98%;
@@ -347,21 +332,82 @@ body {
   object-fit: contain;
   transform: translate(0, 50px);
 }
-#img-focus-wrapper.show > #img-focus,
-#img-focus-wrapper.show > #video-focus {
+#img-focus-wrapper.show > #zoomPanHolder > #img-focus,
+#img-focus-wrapper.show > #zoomPanHolder > #video-focus {
   pointer-events: all;
 }
-#mute-button-focus {
-  z-index: 1001;
-  padding: 150px;
-  background-size: 150px;
-  border-radius: 1000px;
-  pointer-events: all;
-  user-select: all;
+
+/* Full Screen Buttons */
+/* Audio Button */
+.audio-button {
+  bottom: 0;
+  right: 0;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  background: rgba(45, 45, 45, 0.75);
+  background-image: url('../app-icons/volume-mute.png');
+}
+.audio-button.unmute {
+  background-image: url('../app-icons/volume.png');
+}
+#back-button-focus {
+  bottom: 0;
+  left: 0;
+  margin-left: 25px;
+  margin-bottom: 25px;
+  background: rgba(45, 45, 45, 0.75);
+  background-image: url('../app-icons/icon_back.png');
+}
+#reset-button-focus {
+  bottom: 0;
+  left: 0;
+  margin-left: 350px;
+  margin-bottom: 25px;
+  background: rgba(45, 45, 45, 0.75);
+  background-image: url('../app-icons/undo-arrow.png');
+}
+.focus-button {
+  z-index: 1001 !important;
+  padding: 150px !important;
+  background-size: 150px !important;
   position: fixed;
 }
-#mute-button-focus.hide {
+/* This is used both for the focus view buttons as well as any buttons that would hang on an element in the grid */
+.overlay-circle-button {
+  z-index: 2;
+  opacity: 0;
+  padding: 70px;
+  transition: 0.25s;
+  border-radius: 1000px !important;
+  position: absolute;
+  pointer-events: all;
+  user-select: all;
+  background-size: auto;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+.overlay-circle-button.hide {
   opacity: 0 !important;
   pointer-events: none;
   user-select: none;
+}
+.focus-buttons-container:hover > .overlay-circle-button:hover,
+.overlay-circle-button:hover {
+  opacity: 1;
+}
+.focus-buttons-container:hover > .overlay-circle-button {
+  opacity: 0.75;
+}
+.focus-buttons-container {
+  pointer-events: all;
+  padding: 250px 450px;
+  bottom: 0;
+  position: absolute;
+  z-index: 5000;
+}
+.left-focus-buttons-container {
+  left: 0;
+}
+.right-focus-buttons-container {
+  right: 0;
 }

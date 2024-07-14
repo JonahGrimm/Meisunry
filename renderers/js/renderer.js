@@ -2,7 +2,13 @@ const ipcRend = window.ipcRenderer;
 const imageGrid = document.getElementById('imageGrid');
 const focusImg = document.getElementById('img-focus');
 const focusVideo = document.getElementById('video-focus');
+const focusImgVideoWrapper = document.getElementById('img-focus-wrapper');
 const muteButtonFocus = document.getElementById('mute-button-focus');
+const zoomPanHolder = document.getElementById('zoomPanHolder');
+const backButton = document.getElementById('back-button-focus');
+const resetFocusImgButton = document.getElementById('reset-button-focus');
+let panZoomInstance = panzoom(zoomPanHolder);
+panZoomInstance.dispose();
 
 // Set up preferences data
 let preferencesData;
@@ -84,25 +90,32 @@ function setupImagesInGrid() {
 
       let imgElement;
       const imgPath = file.fullPath;
-      console.log(file.isImage);
+      //console.log(file.isImage);
       if (file.isImage === true)
       {
         // Create img element
         imgElement = document.createElement('img');
+        //imgElement.loading = "lazy";
         imgElement.src = imgPath;
         imgElement.id = imgPath;
         imgElement.className = "grid-image";
 
         // Add full screen click event
         imgElement.addEventListener('click', () => {
-          if (focusImg.parentNode.classList.contains('show')) 
+          if (focusImgVideoWrapper.classList.contains('show')) 
           {
-            focusImg.parentNode.classList.remove('show');
+            focusImgVideoWrapper.classList.remove('show');
             return;
           }
           // You can perform operations on the clickedImage here
-          focusImg.parentNode.classList.add('show');
+          focusImgVideoWrapper.classList.add('show');
           focusImg.src = imgPath;
+          focusImg.classList.add('show')
+          backButton.classList.remove('hide');
+          resetFocusImgButton.classList.remove('hide');
+
+          panZoomInstance = panzoom(zoomPanHolder);
+          resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
         });
       }
       else
@@ -118,11 +131,12 @@ function setupImagesInGrid() {
         imgElement.appendChild(sourceElement);
         const audioA = document.createElement(`a`);
         audioA.classList.add(`audio-button`);
+        audioA.classList.add(`overlay-circle-button`);
         gridItem.appendChild(audioA);
-
+        
         // Mute function
         audioA.addEventListener('click', () => {
-          if (focusVideo.parentNode.classList.contains('show')) return;
+          if (focusImgVideoWrapper.classList.contains('show')) return;
           imgElement.muted = !imgElement.muted;
           if (imgElement.muted) audioA.classList.remove(`unmute`);
           else audioA.classList.add(`unmute`);
@@ -130,16 +144,24 @@ function setupImagesInGrid() {
 
         // Add full screen click event
         imgElement.addEventListener('click', () => {
-          if (focusVideo.parentNode.classList.contains('show')) 
+          if (focusImgVideoWrapper.classList.contains('show')) 
           {
-            focusVideo.parentNode.classList.remove('show');
+            focusImgVideoWrapper.classList.remove('show');
             return;
           }
+          // Clear all img settings
+          focusImg.src = '';
+          zoomPanHolder.style.transformOrigin = `0px 0px 0px`;
+          zoomPanHolder.style.transform = `inherit`;
+
+          let zooming = document.body.style.zoom = 1;
+
           // You can perform operations on the clickedImage here
-          focusVideo.parentNode.classList.add('show');
+          focusImgVideoWrapper.classList.add('show');
           focusVideo.querySelector('source').src = imgPath;
           focusVideo.load();
           muteButtonFocus.classList.remove(`hide`);
+          backButton.classList.remove('hide');
           // Sync settings
           focusVideo.currentTime = imgElement.currentTime;
           focusVideo.muted = imgElement.muted;
@@ -231,6 +253,7 @@ function setupImagesInGrid() {
   
     window.addEventListener('resize', function(event) {
         update_images();
+        if (is_an_image_focused()) resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
         // Trigger Masonry Layout's layout after changing the CSS property
         grid.layout();
     }, true);
@@ -330,4 +353,7 @@ function handle_resort(cached_files) {
   grid.layout();
 }
 
+function is_an_image_focused() {
+  return focusImg.classList.contains('show');
+}
 

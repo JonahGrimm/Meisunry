@@ -1,12 +1,28 @@
-// Add a click event listener to the focused image
-focusImg.addEventListener('click', () => {
+// Exit full screen button
+backButton.addEventListener('click', () => {
   hideFocusImg();
 });
 
-// Add a click event listener to the focused video
-focusVideo.addEventListener('click', () => {
-  hideFocusImg();
+// Reset image pan/size button
+resetFocusImgButton.addEventListener('click', () => {
+  resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
 });
+
+// Pause/resume
+focusVideo.addEventListener('click', () => {
+  //focusVideo.resume
+});
+
+function resetPanZoom(elemWid, elemHei) {
+  const screenSize = {
+    "w": Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
+    "h": Math.max(document.documentElement.clientHeight, window.innerHeight || 0)-100
+  };
+  let initalZoom = Math.min(screenSize.w / elemWid, screenSize.h / elemHei);
+  //console.log(`img: ${elemWid} x ${elemHei} screenSize: ${screenSize.w} x ${screenSize.h} zoom: ${initalZoom}` );
+  panZoomInstance.zoomAbs(0, 0, initalZoom);
+  panZoomInstance.moveTo((screenSize.w - elemWid * initalZoom) / 2, (screenSize.h - elemHei * initalZoom) / 2);
+}
 
 muteButtonFocus.addEventListener('click', () => {
   focusVideo.muted = !focusVideo.muted;
@@ -16,19 +32,28 @@ muteButtonFocus.addEventListener('click', () => {
 
 function hideFocusImg() {
   // Hide
-  focusImg.parentNode.classList.remove('show');
+  panZoomInstance.dispose();
+  focusImg.classList.remove('show');
+  focusImgVideoWrapper.classList.remove('show');
   source = focusVideo.querySelector('source').src;
   if (source !== null && source !== "") {
     source = source.replace("file:///", "").replace(/%20/g, ' ').replace(/\//g, "\\");
-    gridVideo = document.getElementById(source).parentNode;
-    gridVideo.play();
-    gridVideo.currentTime = focusVideo.currentTime;
-    gridVideo.muted = focusVideo.muted;
-    aEl = gridVideo.parentNode.querySelector('a')
-    if (gridVideo.muted) aEl.classList.remove(`unmute`);
-    else aEl.classList.add(`unmute`);
+    gridVideo = document.getElementById(source);
+    if (gridVideo !== null) {
+      gridVideo = gridVideo.parentNode;
+      gridVideo.play();
+      gridVideo.currentTime = focusVideo.currentTime;
+      gridVideo.muted = focusVideo.muted;
+      aEl = gridVideo.parentNode.querySelector('a')
+      if (gridVideo.muted) aEl.classList.remove(`unmute`);
+      else aEl.classList.add(`unmute`);
+    }
   }
+  // Hide full screen buttons
+  backButton.classList.add(`hide`);
   muteButtonFocus.classList.add(`hide`);
+  resetFocusImgButton.classList.add(`hide`);
+
   focusVideo.querySelector('source').src = ``;
   focusVideo.muted = true;
   focusVideo.load();
