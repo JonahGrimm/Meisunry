@@ -1,6 +1,6 @@
 {
   "name": "Meisunry",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A masonry image viewer",
   "main": "./mains/main.js",
   "scripts": {
