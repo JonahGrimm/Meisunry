@@ -1,7 +1,17 @@
+// When you click down and release quick enough, exit full screen focus
+let downTime;
+focusImgVideoWrapper.onmousedown = (e) => {
+  downTime = performance.now();
+};
+focusImgVideoWrapper.onmouseup = (e) => {
+  if (performance.now() - downTime < 100) hideFocusImg();
+};
+
 // Exit full screen button
 backButton.addEventListener('click', () => {
   hideFocusImg();
 });
+
 
 // Reset image pan/size button
 resetFocusImgButton.addEventListener('click', () => {

@@ -57,7 +57,8 @@ function setupImagesInGrid() {
       imgCountEl = document.getElementById(`header-image-count`);
       imgCountEl.innerHTML = `${files.length} Images`;
       /* Play image deletion animation and remove it from grid */
-      const deletedFile = document.getElementById(deletedFilePath);
+      let deletedFile = document.getElementById(deletedFilePath);
+      if (deletedFile.tagName === "SOURCE") deletedFile = deletedFile.parentNode
       deletedFile.classList.add(`hide`);
       new Promise((resolve) => setTimeout(() => { 
         imageGrid.removeChild(deletedFile.parentNode); 
@@ -203,9 +204,12 @@ function setupImagesInGrid() {
         return;
       }
       noItemsEl.classList.remove("show");
-  
+      
+      iter = 0;
       for (const file of cached_files) {
         addImage(file);
+        iter++;
+        if (iter % 10 == 0)
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       // Show done pop up
