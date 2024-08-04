@@ -281,7 +281,6 @@ body {
 #img-focus-wrapper.full-screen {
   min-height: 100% !important;
   margin-top: 0 !important;
-  pointer-events: inherit;
 }
 #img-focus-wrapper.full-screen > #img-focus {
   max-height: 98% !important;

@@ -183,6 +183,32 @@ contextMenu({
     ]
   },
   {
+    label: `Set Allowed Files`,
+    type: 'submenu',
+    submenu: [
+      {
+        click: () => { 
+          global.preferencesData.DisableImages = !global.preferencesData.DisableImages;
+          saveAppData();
+          loadIndex(browserWindow);
+        },
+        label: 'Allow Images',
+        type: 'checkbox',
+        checked: !global.preferencesData.DisableImages,
+      },
+      {
+        click: () => { 
+          global.preferencesData.DisableVideos = !global.preferencesData.DisableVideos;
+          saveAppData();
+          loadIndex(browserWindow);
+        },
+        label: 'Allow Videos',
+        type: 'checkbox',
+        checked: !global.preferencesData.DisableVideos,
+      },
+    ]
+  },
+  {
     label: `Choose Folder...`,
     // Only show it when right-clicking text
     type: 'checkbox',

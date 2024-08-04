@@ -4,7 +4,7 @@ focusImgVideoWrapper.onmousedown = (e) => {
   downTime = performance.now();
 };
 focusImgVideoWrapper.onmouseup = (e) => {
-  if (performance.now() - downTime < 100) hideFocusImg();
+  if (performance.now() - downTime < 150) hideFocusImg();
 };
 
 // Exit full screen button

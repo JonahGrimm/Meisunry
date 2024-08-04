@@ -156,7 +156,7 @@ ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
           const stats = await fs.promises.stat(fullFilePath);
           const fileDate = stats.mtime; // Modification date of the file
           isImage = isImagePattern.test(filename);
-          updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath, isImage: isImage });
+          if ((isImage && !preferencesData.DisableImages) || (!isImage && !preferencesData.DisableVideos)) updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath, isImage: isImage });
         } catch (error) {
           console.error(`Error reading file: ${filename}`);
         }
