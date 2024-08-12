@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onEnterFullscreen: (callback) => ipcRenderer.on('enter-full-screen', callback), // Forwards 'enter-full-screen' event from main.js to renderer.js onEnterFullscreen
   onLeaveFullscreen: (callback) => ipcRenderer.on('leave-full-screen', callback), // Forwards 'leave-full-screen' event from main.js to renderer.js onLeaveFullscreen
   onHideFocusImg: (callback) => ipcRenderer.on('hide-focus-img', callback), // Forwards 'hide-focus-img' event from main.js to renderer.js onHideFocusImg
+  onPreferenceUpdate: (callback) => ipcRenderer.on('preference-update', callback), // Forwards 'preference-update' event from main.js to renderer.js onPreferenceUpdate
 })
 //contextBridge.exposeInMainWorld('contextMenu', contextMenu);

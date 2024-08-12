@@ -209,6 +209,54 @@ contextMenu({
     ]
   },
   {
+    label: `Load Speed`,
+    type: 'submenu',
+
+    submenu: [
+      {
+        click: () => {
+          global.preferencesData.loadSpeed = 'fastest';
+          global.preferencesData.loadDelay = 0;
+          saveAppData();
+          browserWindow.webContents.send('preference-update');
+        },
+        label: "Fastest",
+        type: "checkbox",
+        checked: global.preferencesData.loadSpeed == 'fastest',
+      },
+      {
+        click: () => {
+          global.preferencesData.loadSpeed = 'fast';
+          saveAppData();
+          browserWindow.webContents.send('preference-update');
+        },
+        label: "Fast",
+        type: "checkbox",
+        checked: global.preferencesData.loadSpeed == 'fast',
+      },
+      {
+        click: () => {
+          global.preferencesData.loadSpeed = 'medium';
+          saveAppData();
+          browserWindow.webContents.send('preference-update');
+        },
+        label: "Medium",
+        type: "checkbox",
+        checked: global.preferencesData.loadSpeed == 'medium',
+      },
+      {
+        click: () => {
+          global.preferencesData.loadSpeed = 'slow';
+          saveAppData();
+          browserWindow.webContents.send('preference-update');
+        },
+        label: "Slow",
+        type: "checkbox",
+        checked: global.preferencesData.loadSpeed == 'slow',
+      },
+    ]
+  },
+  {
     label: `Choose Folder...`,
     // Only show it when right-clicking text
     type: 'checkbox',

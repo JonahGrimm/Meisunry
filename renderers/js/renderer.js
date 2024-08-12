@@ -12,6 +12,9 @@ panZoomInstance.dispose();
 
 // Set up preferences data
 let preferencesData;
+window.electronAPI.onPreferenceUpdate(() => {
+  ipcRend.invoke('loadAppData').then(data => { preferencesData = data; });
+});
 function updatePreferencesData(callback) {
   /* Request our data */
   ipcRend.invoke('loadAppData').then(data => { preferencesData = data; callback(); });
@@ -256,18 +259,34 @@ function setupImagesInGrid() {
       for (const file of cached_files) {
         const gridItem = _addImage(file);
         if (gridItem == undefined) continue;
-        gridItem.style.visibility = 'hidden';
-        batchItems.push(gridItem);
-        
-        iter++;
-        if (iter >= batchSize || Date.now() - lastProcessTime > processUpdateDelay) {
-          batchSize = Math.max(batchItems.length * 4, initialBatchSize);
-          await processBatch();
-          lastProcessTime = Date.now();
-          iter = 0;
+
+        const loadSpeed = preferencesData.loadSpeed || 'medium';
+        const loadDelay = {
+          'fastest': 0,
+          'fast': 1,
+          'medium': 25,
+          'slow': 150,
+        }[loadSpeed];
+
+        if (loadDelay === 0) {
+          gridItem.style.visibility = 'hidden';
+          batchItems.push(gridItem);
+          
+          iter++;
+          if (batchItems.length >= batchSize || Date.now() - lastProcessTime > processUpdateDelay) {
+            batchSize = Math.max(batchItems.length * 4, initialBatchSize);
+            await processBatch();
+            lastProcessTime = Date.now();
+          }
+        } else {
+          if (batchItems.length > 0) await processBatch();
+          grid.appended(gridItem);
+          grid.layout();
+          if (loadSpeed != 'fast' || iter % 10 == 0)
+          await new Promise(resolve => setTimeout(resolve, loadDelay));
         }
       }
-      await processBatch();
+      if (batchItems.length > 0) await processBatch();
 
       grid.reloadItems();
       grid.layout();
