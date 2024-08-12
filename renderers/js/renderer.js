@@ -204,6 +204,8 @@ function setupImagesInGrid() {
       
       let iter = 0;
       let lastUpdateTime = Date.now();
+      
+      console.time('loadImages');
       for (const file of cached_files) {
         addImage(file);
         iter++;
@@ -215,6 +217,8 @@ function setupImagesInGrid() {
           await new Promise(resolve => setTimeout(resolve, 0));
         }
       }
+      console.timeEnd('loadImages');
+
       // Show done pop up
       const popUp = document.getElementById(`done-pop-up`);
       popUp.classList.add('show');
