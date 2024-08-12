@@ -226,18 +226,20 @@ function setupImagesInGrid() {
           onloadPromises.push(new Promise(resolve => {
             imgElement.onload = resolve;
             imgElement.onerror = resolve;
+            if (imgElement.complete) resolve();
             setTimeout(resolve, 5000);
           }));
         }
         await Promise.all(onloadPromises);
 
-        // Add the batch to the grid
-        grid.addItems(currentBatch);
-        grid.layout();
-
         // Wait for the batch to be processed (with a timeout)
         await new Promise(resolve => {
           grid.once('layoutComplete', resolve);
+
+          // Add the batch to the grid
+          grid.addItems(currentBatch);
+          grid.layout();
+
           setTimeout(resolve, 5000);
         });
 
