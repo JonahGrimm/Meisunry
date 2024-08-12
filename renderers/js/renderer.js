@@ -80,7 +80,7 @@ function setupImagesInGrid() {
       handle_resort(files);
     })
 
-    function addImage(file) {
+    function _addImage(file) {
       // Only generate a new element and append it if it doesn't already exist
       const existingEl = document.getElementById(`${file.fullPath}`);
       if (existingEl != null) return;
@@ -181,6 +181,12 @@ function setupImagesInGrid() {
 
       // Add to grid
       imageGrid.appendChild(gridItem);
+      return gridItem;
+    }
+
+    function addImage(file) {
+      const gridItem = _addImage(file);
+      if (gridItem == undefined) return;
       grid.appended(gridItem);
       grid.reloadItems();
       grid.layout();
@@ -188,7 +194,6 @@ function setupImagesInGrid() {
   
     // Lazy loads images. Does so with a bit of a delays
     async function loadImages(input_files) {
-      const delay = 5; // Delay in milliseconds
       const cached_files = [...input_files];
   
       noItemsEl = document.getElementById(`no-items-text`);
@@ -204,14 +209,68 @@ function setupImagesInGrid() {
         return;
       }
       noItemsEl.classList.remove("show");
-      
-      iter = 0;
+
+      let iter = 0;
+      let lastProcessTime = Date.now();
+      let batchItems = [];
+
+      const processBatch = async () => {
+        let currentBatch = batchItems;
+        batchItems = [];
+
+        // Wait for all images in the batch to load
+        const onloadPromises = [];
+        for (const gridItem of currentBatch) {
+          const imgElement = gridItem.querySelector('img, video');
+          if (imgElement == null || imgElement.complete) continue;
+          onloadPromises.push(new Promise(resolve => {
+            imgElement.onload = resolve;
+            imgElement.onerror = resolve;
+            setTimeout(resolve, 5000);
+          }));
+        }
+        await Promise.all(onloadPromises);
+
+        // Add the batch to the grid
+        grid.addItems(currentBatch);
+        grid.layout();
+
+        // Wait for the batch to be processed (with a timeout)
+        await new Promise(resolve => {
+          grid.once('layoutComplete', resolve);
+          setTimeout(resolve, 5000);
+        });
+
+        // Show the images
+        for (const gridItem of currentBatch)
+          gridItem.style.visibility = 'visible';
+      };
+
+      const initialBatchSize = 30;
+      const processUpdateDelay = 1000 / 5;
+      let batchSize = initialBatchSize;
+
+      console.time('loadImages');
       for (const file of cached_files) {
-        addImage(file);
+        const gridItem = _addImage(file);
+        if (gridItem == undefined) continue;
+        gridItem.style.visibility = 'hidden';
+        batchItems.push(gridItem);
+        
         iter++;
-        if (iter % 10 == 0)
-        await new Promise(resolve => setTimeout(resolve, delay));
+        if (iter >= batchSize || Date.now() - lastProcessTime > processUpdateDelay) {
+          batchSize = Math.max(batchItems.length * 4, initialBatchSize);
+          await processBatch();
+          lastProcessTime = Date.now();
+          iter = 0;
+        }
       }
+      await processBatch();
+
+      grid.reloadItems();
+      grid.layout();
+      console.timeEnd('loadImages');
+
       // Show done pop up
       const popUp = document.getElementById(`done-pop-up`);
       popUp.classList.add('show');
