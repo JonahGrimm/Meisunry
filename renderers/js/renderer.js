@@ -182,13 +182,10 @@ function setupImagesInGrid() {
       // Add to grid
       imageGrid.appendChild(gridItem);
       grid.appended(gridItem);
-      grid.reloadItems();
-      grid.layout();
     }
   
     // Lazy loads images. Does so with a bit of a delays
     async function loadImages(input_files) {
-      const delay = 5; // Delay in milliseconds
       const cached_files = [...input_files];
   
       noItemsEl = document.getElementById(`no-items-text`);
@@ -205,12 +202,18 @@ function setupImagesInGrid() {
       }
       noItemsEl.classList.remove("show");
       
-      iter = 0;
+      let iter = 0;
+      let lastUpdateTime = Date.now();
       for (const file of cached_files) {
         addImage(file);
         iter++;
-        if (iter % 10 == 0)
-        await new Promise(resolve => setTimeout(resolve, delay));
+        if (iter % 5 == 0 && Date.now() - lastUpdateTime > 1000 / 60) {
+          lastUpdateTime = Date.now();
+
+          grid.reloadItems();
+          grid.layout();
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
       }
       // Show done pop up
       const popUp = document.getElementById(`done-pop-up`);
