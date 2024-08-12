@@ -27,27 +27,27 @@ let resortAfterImageLoad;
 function setupImagesInGrid() {
   ipcRend.invoke('readFilesFromDisk', preferencesData.folderLocation).then(files => {
     console.log(`${preferencesData.folderLocation}`);
-  
+
     resortAfterImageLoad = false;
-  
+
     grid = new Masonry('.grid', {
       itemSelector: '.grid-item',
       gutter: 0,
     });
-  
+
     files = resort(files);
     handle_resort(files);
     loadImages(files);
-  
+
     window.electronAPI.onSortUpdate((event, value) => {
       console.log('sort update');
-      updatePreferencesData(() => { 
+      updatePreferencesData(() => {
         files = resort(files);
         handle_resort(files);
         resortAfterImageLoad = true;
       });
     })
-  
+
     window.electronAPI.onFileDeleted((event, deletedFilePath) => {
       /* Fix file path */
       deletedFilePath = deletedFilePath.replace(/\//g, '\\');
@@ -60,8 +60,8 @@ function setupImagesInGrid() {
       let deletedFile = document.getElementById(deletedFilePath);
       if (deletedFile.tagName === "SOURCE") deletedFile = deletedFile.parentNode
       deletedFile.classList.add(`hide`);
-      new Promise((resolve) => setTimeout(() => { 
-        imageGrid.removeChild(deletedFile.parentNode); 
+      new Promise((resolve) => setTimeout(() => {
+        imageGrid.removeChild(deletedFile.parentNode);
         grid.reloadItems();
         grid.layout();
       }, 500));
@@ -92,8 +92,7 @@ function setupImagesInGrid() {
       let imgElement;
       const imgPath = file.fullPath;
       //console.log(file.isImage);
-      if (file.isImage === true)
-      {
+      if (file.isImage === true) {
         // Create img element
         imgElement = document.createElement('img');
         //imgElement.loading = "lazy";
@@ -103,8 +102,7 @@ function setupImagesInGrid() {
 
         // Add full screen click event
         imgElement.addEventListener('click', () => {
-          if (focusImgVideoWrapper.classList.contains('show')) 
-          {
+          if (focusImgVideoWrapper.classList.contains('show')) {
             focusImgVideoWrapper.classList.remove('show');
             return;
           }
@@ -119,8 +117,7 @@ function setupImagesInGrid() {
           resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
         });
       }
-      else
-      {
+      else {
         imgElement = document.createElement('video');
         imgElement.autoplay = true;
         imgElement.muted = true;
@@ -134,7 +131,7 @@ function setupImagesInGrid() {
         audioA.classList.add(`audio-button`);
         audioA.classList.add(`overlay-circle-button`);
         gridItem.appendChild(audioA);
-        
+
         // Mute function
         audioA.addEventListener('click', () => {
           if (focusImgVideoWrapper.classList.contains('show')) return;
@@ -145,8 +142,7 @@ function setupImagesInGrid() {
 
         // Add full screen click event
         imgElement.addEventListener('click', () => {
-          if (focusImgVideoWrapper.classList.contains('show')) 
-          {
+          if (focusImgVideoWrapper.classList.contains('show')) {
             focusImgVideoWrapper.classList.remove('show');
             return;
           }
@@ -174,7 +170,7 @@ function setupImagesInGrid() {
           audioA.classList.remove(`unmute`);
         });
       }
-      
+
 
       // Nest within div
       gridItem.appendChild(imgElement);
@@ -182,67 +178,79 @@ function setupImagesInGrid() {
       // Add to grid
       imageGrid.appendChild(gridItem);
       grid.appended(gridItem);
-      grid.reloadItems();
-      grid.layout();
     }
-  
+
     // Lazy loads images. Does so with a bit of a delays
     async function loadImages(input_files) {
-      const delay = 5; // Delay in milliseconds
       const cached_files = [...input_files];
-  
+
       noItemsEl = document.getElementById(`no-items-text`);
       imgCountEl = document.getElementById(`header-image-count`);
       imgCountEl.innerHTML = `${files.length} Images`;
       headerPathEl = document.getElementById(`header-folder-path`);
       headerPathEl.innerHTML = preferencesData.folderLocation;
-      if (cached_files.length == 0)
-      {
+      if (cached_files.length == 0) {
         noItemsEl.classList.add("show");
         pathEl = document.getElementById(`folder-path`);
         pathEl.innerHTML = preferencesData.folderLocation;
         return;
       }
       noItemsEl.classList.remove("show");
-      
-      iter = 0;
+
+      const renderUpdateDelay = 1000 / 60;
+      const layoutUpdateDelay = 1000;
+
+      let iter = 0;
+      let lastUpdateTime = Date.now();
+      let lastLayoutTime = Date.now();
+
+      console.time('loadImages');
       for (const file of cached_files) {
         addImage(file);
-        iter++;
-        if (iter % 10 == 0)
-        await new Promise(resolve => setTimeout(resolve, delay));
+        if (++iter % 5 == 0 && Date.now() - lastUpdateTime > renderUpdateDelay) {
+          if (Date.now() - lastLayoutTime > layoutUpdateDelay) {
+            grid.layout();
+            lastLayoutTime = Date.now();
+          }
+
+          await new Promise(resolve => setTimeout(resolve, 0));
+          lastUpdateTime = Date.now();
+        }
       }
+      grid.reloadItems();
+      grid.layout();
+      console.timeEnd('loadImages');
+
       // Show done pop up
       const popUp = document.getElementById(`done-pop-up`);
       popUp.classList.add('show');
-  
-      
+
+
       await new Promise(resolve => setTimeout(resolve, 1000));
       for (const file of cached_files) {
         // Only generate a new element and append it if it doesn't already exist
         const existingEl = document.getElementById(`${file.name}`);
         if (existingEl != null) existingEl.classList.add("shown");
       }
-  
+
       if (resortAfterImageLoad) handle_resort(files);
       resortAfterImageLoad = false;
     }
-  
+
     // Listen for the wheel event to adjust the CSS property
     imageGrid.addEventListener('wheel', event => {
       if (event.ctrlKey) {
         event.preventDefault();
-  
+
         // Determine the direction of the scroll
         const zoomAmount = event.deltaY > 0 ? 0.75 : 1.25;
         currentZoom *= zoomAmount;
         currentZoom = Math.max(currentZoom, 0.1);
-        update_images();  
+        update_images();
         // Trigger Masonry Layout's layout after changing the CSS property
-        grid.layout();    
+        grid.layout();
       }
-      else if (event.shiftKey)
-      {
+      else if (event.shiftKey) {
         // Determine the direction of the scroll
         const paddingAmount = event.deltaY > 0 ? 0.1 : -0.1;
         currentPadding += paddingAmount;
@@ -252,16 +260,16 @@ function setupImagesInGrid() {
         grid.layout();
       }
     });
-  
+
     setTimeout(() => { update_images(); grid.layout(); }, 100);
-  
-    window.addEventListener('resize', function(event) {
-        update_images();
-        if (is_an_image_focused()) resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
-        // Trigger Masonry Layout's layout after changing the CSS property
-        grid.layout();
+
+    window.addEventListener('resize', function (event) {
+      update_images();
+      if (is_an_image_focused()) resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
+      // Trigger Masonry Layout's layout after changing the CSS property
+      grid.layout();
     }, true);
-  
+
   }).catch(err => {
     console.error('Error reading image folder:', err);
   });
@@ -280,7 +288,7 @@ function update_images() {
     // You can adjust other styling properties as needed
   });
   imageGrid.style.transform = `scale(${get_transform_correction_scale()})`;
-  imageGrid.style.marginTop = `${(1-currentPadding)*width}px`;
+  imageGrid.style.marginTop = `${(1 - currentPadding) * width}px`;
 }
 
 function calc_width() {
@@ -303,7 +311,7 @@ function resort(files) {
       files = files.sort((a, b) => b.date - a.date); break;
     case 'oldest':
       console.log(`sorting by oldest`);
-      files = files.sort((a, b) => b.date - a.date); 
+      files = files.sort((a, b) => b.date - a.date);
       files = files.reverse(); break;
     case 'name-a':
       console.log(`sorting by name a to z`);
