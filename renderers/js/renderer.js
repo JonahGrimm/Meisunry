@@ -83,7 +83,7 @@ function setupImagesInGrid() {
       handle_resort(files);
     })
 
-    function _addImage(file) {
+    function createImage(file) {
       // Only generate a new element and append it if it doesn't already exist
       const existingEl = document.getElementById(`${file.fullPath}`);
       if (existingEl != null) return;
@@ -177,18 +177,18 @@ function setupImagesInGrid() {
           audioA.classList.remove(`unmute`);
         });
       }
-      
 
       // Nest within div
       gridItem.appendChild(imgElement);
 
       // Add to grid
       imageGrid.appendChild(gridItem);
+
       return gridItem;
     }
 
     function addImage(file) {
-      const gridItem = _addImage(file);
+      const gridItem = createImage(file);
       if (gridItem == undefined) return;
       grid.appended(gridItem);
       grid.reloadItems();
@@ -213,85 +213,105 @@ function setupImagesInGrid() {
       }
       noItemsEl.classList.remove("show");
 
+      function waitForResourcesToLoad(elements) {
+        const promises = [];
+        for (const element of elements) {
+          if (!element || element.complete) continue;
+          promises.push(new Promise(resolve => {
+            element.onload = resolve;
+            element.onerror = resolve;
+            if (element.complete) resolve();
+            setTimeout(resolve, 5000);
+          }));
+        }
+        return Promise.all(promises);
+      }
+
       let iter = 0;
       let lastProcessTime = Date.now();
       let batchItems = [];
 
-      const processBatch = async () => {
+      const processBatch = async (animate = false) => {
+        console.debug('Processing batch of', batchItems.length, 'items (animate:', animate, ')');
+        
         let currentBatch = batchItems;
         batchItems = [];
 
         // Wait for all images in the batch to load
-        const onloadPromises = [];
-        for (const gridItem of currentBatch) {
-          const imgElement = gridItem.querySelector('img, video');
-          if (imgElement == null || imgElement.complete) continue;
-          onloadPromises.push(new Promise(resolve => {
-            imgElement.onload = resolve;
-            imgElement.onerror = resolve;
-            if (imgElement.complete) resolve();
-            setTimeout(resolve, 5000);
-          }));
-        }
-        await Promise.all(onloadPromises);
+        await waitForResourcesToLoad(currentBatch.map(gridItem => gridItem.querySelector('img, video')));
 
         // Wait for the batch to be processed (with a timeout)
         await new Promise(resolve => {
           grid.once('layoutComplete', resolve);
 
           // Add the batch to the grid
-          grid.addItems(currentBatch);
-          grid.layout();
+          if (animate) {
+            for (const gridItem of currentBatch)
+              gridItem.style.visibility = 'visible';
+            grid.appended(currentBatch);
+          } else {
+            grid.addItems(currentBatch);
+            grid.layout();
+          }
 
           setTimeout(resolve, 5000);
         });
 
-        // Show the images
-        for (const gridItem of currentBatch)
-          gridItem.style.visibility = 'visible';
+        if (!animate)
+          for (const gridItem of currentBatch)
+            gridItem.style.visibility = 'visible';
       };
 
-      const initialBatchSize = 30;
-      const processUpdateDelay = 1000 / 5;
+      const initialBatchSize = 50;
+      const fastBatchSizeLimit = 20;
+      const processUpdateDelay = 1000 / 60;
       let batchSize = initialBatchSize;
 
       console.time('loadImages');
+
       for (const file of cached_files) {
-        const gridItem = _addImage(file);
+        const gridItem = createImage(file);
         if (gridItem == undefined) continue;
 
-        const loadSpeed = preferencesData.loadSpeed || 'medium';
+        const loadSpeed = preferencesData.loadSpeed || 'fast';
         const loadDelay = {
-          'fastest': 0,
-          'fast': 1,
-          'medium': 25,
-          'slow': 150,
+          'medium': 0,
+          'slow': 100,
         }[loadSpeed];
 
-        if (loadDelay === 0) {
+        if (loadSpeed.startsWith('fast')) { // Fastest / Fast
           gridItem.style.visibility = 'hidden';
           batchItems.push(gridItem);
-          
+
           iter++;
           if (batchItems.length >= batchSize || Date.now() - lastProcessTime > processUpdateDelay) {
-            batchSize = Math.max(batchItems.length * 4, initialBatchSize);
-            await processBatch();
+            batchSize = Math.min(Math.max(batchItems.length * 4, initialBatchSize), 2000);
+            await processBatch(loadSpeed !== 'fastest');
             lastProcessTime = Date.now();
           }
+
+          if (loadSpeed === 'fast') batchSize = Math.min(batchSize, fastBatchSizeLimit);
+
         } else {
           if (batchItems.length > 0) await processBatch();
+
           grid.appended(gridItem);
-          grid.layout();
-          if (loadSpeed != 'fast' || iter % 10 == 0)
-          await new Promise(resolve => setTimeout(resolve, loadDelay));
+          if (loadDelay !== 0 || iter % 10 === 0 || Date.now() - lastProcessTime > processUpdateDelay) {
+            grid.layout();
+            await new Promise(resolve => setTimeout(resolve, loadDelay));
+            lastProcessTime = Date.now();
+          }
         }
       }
       if (batchItems.length > 0) await processBatch();
-
-      grid.reloadItems();
+      
+      // Wait for all images to load before triggering Masonry Layout
+      await waitForResourcesToLoad(imageGrid.querySelectorAll('img, video'));
       grid.layout();
+
       console.timeEnd('loadImages');
 
+      
       // Show done pop up
       const popUp = document.getElementById(`done-pop-up`);
       popUp.classList.add('show');
