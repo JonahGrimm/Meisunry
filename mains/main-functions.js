@@ -25,6 +25,7 @@ function loadData() {
       folderLocation: "C:\\",
       sortMode: "date",
       recursion: 0,
+      loadSpeed: 'medium',
     }
     const serializedData = JSON.stringify(baseData, null, 2);
     fs.writeFileSync(dataFilePath, serializedData);
