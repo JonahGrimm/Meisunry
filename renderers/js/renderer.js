@@ -3,8 +3,7 @@ function addImage(file) {
   gridItem.style.visibility = "visible";
   if (gridItem == undefined) return;
   grid.appended(gridItem);
-  grid.reloadItems();
-  grid.layout();
+  refreshGridLayout();
 }
 
 function createImage(file) {

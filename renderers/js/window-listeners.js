@@ -13,18 +13,31 @@ window.electronAPI.onRefreshGrid(() => {
   /* Refresh grid */
   console.log('Refreshing grid');
   ipcRend.invoke('readFilesFromDisk', preferencesData.folderLocation).then(b => {
+
     // Add newly added items
     let itemsNotInAllFiles = b.filter(itemB => 
       !allFiles.some(itemA => itemA.fullPath === itemB.fullPath)
     );
     allFiles = allFiles.concat(itemsNotInAllFiles);
+
+
     // Remove deleted items
     let itemsMissingFromFiles = allFiles.filter(itemA => 
       !b.some(itemB => itemB.fullPath === itemA.fullPath)
     );
     itemsMissingFromFiles.forEach (item => {
-      removeFromGrid(item.fullPath);
+      removeFromGrid(item.fullPath, true);
     });
+
+    let time = 100;
+    if (itemsMissingFromFiles.length > 0) time = 510;
+    // We want to update the grid all at once rather then queue it a million times
+    new Promise((resolve) => setTimeout(() => { 
+      allFiles = resort(allFiles);
+      handle_resort(allFiles);
+      refreshGridLayout();
+    }, time));
+
     updateHeaderCounter();
     // Trigger load images call
     loadImages(itemsNotInAllFiles);
@@ -52,17 +65,17 @@ window.electronAPI.onFileDeleted((event, deletedFilePath) => {
   removeFromGrid(deletedFilePath)
 })
 
-function removeFromGrid(deletedFilePath)
+function removeFromGrid(deletedFilePath, dontRefreshGrid)
 {
   /* Reduce files list */
   allFiles = allFiles.filter(file => file.fullPath !== deletedFilePath);
   let deletedFile = document.getElementById(deletedFilePath);
   if (deletedFile.tagName === "SOURCE") deletedFile = deletedFile.parentNode
   deletedFile.classList.add(`hide`);
+
   new Promise((resolve) => setTimeout(() => { 
     imageGrid.removeChild(deletedFile.parentNode); 
-    grid.reloadItems();
-    grid.layout();
+    if (!dontRefreshGrid) refreshGridLayout();
   }, 500));
 }
 

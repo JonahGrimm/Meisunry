@@ -83,6 +83,5 @@ function handle_resort(cached_files) {
     parentElement.insertBefore(divElement, parentElement.firstChild);
   });
   cached_files.reverse();
-  grid.reloadItems();
-  grid.layout();
+  refreshGridLayout();
 }

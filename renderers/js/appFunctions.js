@@ -14,3 +14,8 @@ function updateHeaderCounter() {
   imgCountEl = document.getElementById(`header-image-count`);
   imgCountEl.innerHTML = `${allFiles.length} Items`;
 }
+
+function refreshGridLayout() {
+  grid.reloadItems();
+  grid.layout();
+}
