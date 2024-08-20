@@ -68,4 +68,8 @@ function loadIndex(browserWindow) {
   const parentDir = path.join(__dirname, '..');
   browserWindow.loadURL(`file://${parentDir}/renderers/index.html`);
 }
-module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData, loadIndex };
+
+function refreshGrid (browserWindow) {
+  browserWindow.webContents.send('refresh-grid-update'); 
+}
+module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData, loadIndex, refreshGrid };

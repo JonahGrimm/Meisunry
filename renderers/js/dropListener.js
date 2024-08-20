@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('folderDropped', currentFile.path);
         break;
       }
-      if (endsWithImageExtension(currentFile.path)) {
+      if (endsWithValidFile(currentFile.path)) {
         ipcRenderer.send('imageDropped', currentFile.path);
         break;
       }
@@ -48,13 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-function endsWithImageExtension(filename) {
-  return (
-    filename.endsWith('.jpg') ||
-    filename.endsWith('.jpeg') ||
-    filename.endsWith('.png') ||
-    filename.endsWith('.gif') ||
-    filename.endsWith('.jfif') ||
-    filename.endsWith('.webp')
-  );
+function endsWithValidFile(filename) {
+  return filename.match(/\.(jpg|jpeg|png|gif|jfif|webp|mp4|webm|mkv|avi|mov|wmv|flv|mts)$/i)
 }

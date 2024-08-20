@@ -62,7 +62,7 @@ function createWindow() {
         try {
           const stats = await fs.promises.stat(destinationFilePath);
           const fileDate = stats.mtime; // Modification date of the file
-          const newImageFile = { name: path.basename(destinationFilePath), date: fileDate, fullPath: destinationFilePath };
+          const newImageFile = { name: path.basename(destinationFilePath), date: fileDate, fullPath: destinationFilePath, isImage: isFileAnImage(destinationFilePath), };
           mainWindow.webContents.send('added-file', newImageFile); 
         } catch (error) {
           console.error(`Error reading file: ${filename}`);
@@ -148,14 +148,13 @@ ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
     // Push filtered file group to final list 
     async function pushFilteredFilesToList(targetFiles, targetFilePath) {
       targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp|mp4|webm|mkv|avi|mov|wmv|flv|mts)$/i));
-      const isImagePattern = /\.(jpg|jpeg|png|gif|jfif|webp)$/i;
       for (const filename of targetFiles) {
         const fullFilePath = path.join(targetFilePath, filename);
     
         try {
           const stats = await fs.promises.stat(fullFilePath);
           const fileDate = stats.mtime; // Modification date of the file
-          isImage = isImagePattern.test(filename);
+          isImage = isFileAnImage(filename);
           if ((isImage && !preferencesData.DisableImages) || (!isImage && !preferencesData.DisableVideos)) updatedFileList.push({ name: filename, date: fileDate, fullPath: fullFilePath, isImage: isImage });
         } catch (error) {
           console.error(`Error reading file: ${filename}`);
@@ -180,5 +179,10 @@ app.on('window-all-closed', function () {
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
+
+function isFileAnImage(fileName) {
+  const isImagePattern = /\.(jpg|jpeg|png|gif|jfif|webp)$/i;
+  return isImagePattern.test(fileName);
+}
 
 const contextMenuJS = require('./context-menu');
