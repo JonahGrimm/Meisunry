@@ -1,7 +1,7 @@
 const contextMenu = require('electron-context-menu');
 const { app, clipboard, dialog, shell } = require('electron');
 const fs = require('fs');
-const { loadFolder, saveAppData, loadData, loadIndex } = require('./main-functions');
+const { loadFolder, saveAppData, loadData, loadIndex, refreshGrid } = require('./main-functions');
 let trash;
 import('trash').then((trashModule) => { trash = trashModule.default || trashModule; });
 
@@ -94,7 +94,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 0;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: 'No recursion',
         type: 'checkbox',
@@ -104,7 +104,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 1;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '1 Folder Deep',
         type: 'checkbox',
@@ -114,7 +114,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 2;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '2 Folders Deep',
         type: 'checkbox',
@@ -124,7 +124,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 3;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '3 Folders Deep',
         type: 'checkbox',
@@ -134,7 +134,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 4;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '4 Folders Deep',
         type: 'checkbox',
@@ -144,7 +144,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 5;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '5 Folders Deep',
         type: 'checkbox',
@@ -154,7 +154,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 6;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '6 Folders Deep',
         type: 'checkbox',
@@ -164,7 +164,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 7;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '7 Folders Deep',
         type: 'checkbox',
@@ -174,7 +174,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.recursion = 8;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: '8 Folders Deep',
         type: 'checkbox',
@@ -190,7 +190,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.DisableImages = !global.preferencesData.DisableImages;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: 'Allow Images',
         type: 'checkbox',
@@ -200,7 +200,7 @@ contextMenu({
         click: () => { 
           global.preferencesData.DisableVideos = !global.preferencesData.DisableVideos;
           saveAppData();
-          loadIndex(browserWindow);
+          refreshGrid(browserWindow);
         },
         label: 'Allow Videos',
         type: 'checkbox',
@@ -309,6 +309,13 @@ contextMenu({
           console.error('File does not exist or cannot be accessed');
         }
       });
+    }
+  },
+  {
+    label: `Refresh`,
+    type: 'checkbox',
+    click: () => {
+      refreshGrid(browserWindow);
     }
   },
   /*{

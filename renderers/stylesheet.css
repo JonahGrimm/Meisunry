@@ -411,3 +411,16 @@ body {
 .right-focus-buttons-container {
   right: 0;
 }
+
+.svg-background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-top: 15px;
+  margin-left: -100px;
+  opacity: 0;
+}
+
+.svg-background.show {
+  opacity: 1;
+}

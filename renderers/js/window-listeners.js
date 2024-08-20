@@ -8,10 +8,28 @@ function updatePreferencesData(callback) {
 }
 updatePreferencesData(setupImagesInGrid);
 
-// Refreshing controls
+
 window.electronAPI.onRefreshGrid(() => {
   /* Refresh grid */
   console.log('Refreshing grid');
+  ipcRend.invoke('readFilesFromDisk', preferencesData.folderLocation).then(b => {
+    // Add newly added items
+    let itemsNotInAllFiles = b.filter(itemB => 
+      !allFiles.some(itemA => itemA.fullPath === itemB.fullPath)
+    );
+    allFiles = allFiles.concat(itemsNotInAllFiles);
+    // Remove deleted items
+    let itemsMissingFromFiles = allFiles.filter(itemA => 
+      !b.some(itemB => itemB.fullPath === itemA.fullPath)
+    );
+    itemsMissingFromFiles.forEach (item => {
+      removeFromGrid(item.fullPath);
+    });
+    updateHeaderCounter();
+    // Trigger load images call
+    loadImages(itemsNotInAllFiles);
+    resortAfterImageLoad = true;
+  });
 });
 
 
@@ -27,12 +45,17 @@ window.electronAPI.onSortUpdate((event, value) => {
 window.electronAPI.onFileDeleted((event, deletedFilePath) => {
   /* Fix file path */
   deletedFilePath = deletedFilePath.replace(/\//g, '\\');
+  /* Update image count on topbar */
+  updateHeaderCounter();
+  // Rm from grid
+  /* Play image deletion animation and remove it from grid */
+  removeFromGrid(deletedFilePath)
+})
+
+function removeFromGrid(deletedFilePath)
+{
   /* Reduce files list */
   allFiles = allFiles.filter(file => file.fullPath !== deletedFilePath);
-  /* Update image count on topbar */
-  imgCountEl = document.getElementById(`header-image-count`);
-  imgCountEl.innerHTML = `${allFiles.length} Images`;
-  /* Play image deletion animation and remove it from grid */
   let deletedFile = document.getElementById(deletedFilePath);
   if (deletedFile.tagName === "SOURCE") deletedFile = deletedFile.parentNode
   deletedFile.classList.add(`hide`);
@@ -41,14 +64,11 @@ window.electronAPI.onFileDeleted((event, deletedFilePath) => {
     grid.reloadItems();
     grid.layout();
   }, 500));
-})
+}
 
 window.electronAPI.onFileAdded((event, newFile) => {
   /* Add to files list */
   allFiles.push(newFile);
-  /* Update image count on topbar */
-  imgCountEl = document.getElementById(`header-image-count`);
-  imgCountEl.innerHTML = `${allFiles.length} Images`;
   /* Append */
   addImage(newFile);
   /* Resort */

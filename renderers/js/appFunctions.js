@@ -8,3 +8,9 @@ minimizeBtn.addEventListener('click', () => {
 maxResBtn.addEventListener('click', () => { 
   ipcRenderer.send('maximizeApp');
 });
+
+function updateHeaderCounter() {
+  /* Update image count on topbar */
+  imgCountEl = document.getElementById(`header-image-count`);
+  imgCountEl.innerHTML = `${allFiles.length} Items`;
+}

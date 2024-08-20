@@ -8,6 +8,8 @@ function addImage(file) {
 }
 
 function createImage(file) {
+  updateHeaderCounter();
+
   // Only generate a new element and append it if it doesn't already exist
   const existingEl = document.getElementById(`${file.fullPath}`);
   if (existingEl != null) return;
@@ -135,22 +137,28 @@ function setupImagesInGrid() {
 }
 
 // Lazy loads images. Does so with a bit of a delays
+let loadCallStack = 0;
 async function loadImages(input_files) {
   const cached_files = [...input_files];
 
+  updateHeaderCounter();
   noItemsEl = document.getElementById(`no-items-text`);
-  imgCountEl = document.getElementById(`header-image-count`);
-  imgCountEl.innerHTML = `${allFiles.length} Images`;
   headerPathEl = document.getElementById(`header-folder-path`);
   headerPathEl.innerHTML = preferencesData.folderLocation;
   if (cached_files.length == 0)
   {
-    noItemsEl.classList.add("show");
-    pathEl = document.getElementById(`folder-path`);
-    pathEl.innerHTML = preferencesData.folderLocation;
+    if (allFiles.length == 0)
+    {
+      noItemsEl.classList.add("show");
+      pathEl = document.getElementById(`folder-path`);
+      pathEl.innerHTML = preferencesData.folderLocation;
+    }
     return;
   }
   noItemsEl.classList.remove("show");
+
+  loadCallStack++;
+  updateLoadingIcon();
 
   function waitForResourcesToLoad(elements) {
     const promises = [];
@@ -250,11 +258,9 @@ async function loadImages(input_files) {
 
   console.timeEnd('loadImages');
 
-  
   // Show done pop up
-  const popUp = document.getElementById(`done-pop-up`);
-  popUp.classList.add('show');
-
+  loadCallStack--;
+  updateLoadingIcon();
   
   await new Promise(resolve => setTimeout(resolve, 1000));
   for (const file of cached_files) {

@@ -9,6 +9,8 @@ const zoomPanHolder = document.getElementById('zoomPanHolder');
 const backButton = document.getElementById('back-button-focus');
 const resetFocusImgButton = document.getElementById('reset-button-focus');
 const gridWrapper = document.getElementById('grid-wrapper');
+const donePopUp = document.getElementById(`done-pop-up`);
+const loadIcon = document.getElementById(`load-icon`);
 
 // Zoom and pan controls
 let panZoomInstance = panzoom(zoomPanHolder);

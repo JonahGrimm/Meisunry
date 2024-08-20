@@ -11,11 +11,13 @@
       <div class="topBar">
           <div class="titleBar">
             <div id="window-name" class="title">
-              <b>Meisunry</b>
-              <div style="width: 15px"></div>
-              <span id="header-folder-path" class="header-browsing-text"></span>
+                <b>Meisunry</b>
+                <div style="width: 15px"></div>
+                <span id="header-folder-path" class="header-browsing-text"></span>
               <div class="right-top-bar">
-                <span id="header-image-count">0 Images</span>
+                <!-- Render SVG using embed tag -->
+                <embed id="load-icon" class="svg-background" type="image/svg+xml" src="../app-icons/load.svg" width="65" height="65">
+                  <span id="header-image-count">0 Images</span>
               </div>
             </div>
           </div>
@@ -78,5 +80,6 @@
   <script src="js/flash-copied.js"></script>
   <script src="js/appFunctions.js"></script>
   <script src="js/sorting-functions.js"></script>
+  <script src="js/loading-icon.js"></script>
 </body>
 </html>
