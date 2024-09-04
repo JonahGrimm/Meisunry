@@ -1,3 +1,32 @@
+/**
+ * Removes a prefix from a string.
+ *
+ * @param {string} str - The input string.
+ * @param {string} prefix - The prefix to be removed.
+ * @returns {string} - The string with the prefix removed.
+ */
+function removePrefix(str, prefix) {
+  if (str.startsWith(prefix)) return str.substring(prefix.length);
+  return str;
+}
+
+/**
+ * Escapes special characters in file paths
+ * @param {string} filePath
+ * @returns {string} filePath with special characters escaped
+*/
+function encodeFilePath(filePath) {
+  let escapedPath = "file:///" + removePrefix(filePath, "file:///")
+    .replace(/\\/g, '/')
+    .split('/').map(encodeURIComponent).join('/')
+    .replace(
+      /[!~*'()]/g,
+      (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    )
+  return escapedPath;
+}
+
+
 function addImage(file) {
   const gridItem = createImage(file);
   gridItem.style.visibility = "visible";
@@ -18,7 +47,7 @@ function createImage(file) {
   gridItem.className = 'grid-item';
 
   let imgElement;
-  const imgPath = file.fullPath;
+  const imgPath = encodeFilePath(file.fullPath);
   //console.log(file.isImage);
   if (file.isImage === true)
   {

@@ -48,7 +48,6 @@ function hideFocusImg() {
   focusImgVideoWrapper.classList.remove('show');
   source = focusVideo.querySelector('source').src;
   if (source !== null && source !== "") {
-    source = source.replace("file:///", "").replace(/%20/g, ' ').replace(/\//g, "\\");
     gridVideo = document.getElementById(source);
     if (gridVideo !== null) {
       gridVideo = gridVideo.parentNode;
