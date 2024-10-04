@@ -1,22 +1,10 @@
 /**
- * Removes a prefix from a string.
- *
- * @param {string} str - The input string.
- * @param {string} prefix - The prefix to be removed.
- * @returns {string} - The string with the prefix removed.
- */
-function removePrefix(str, prefix) {
-  if (str.startsWith(prefix)) return str.substring(prefix.length);
-  return str;
-}
-
-/**
  * Escapes special characters in file paths
  * @param {string} filePath
  * @returns {string} filePath with special characters escaped
 */
 function encodeFilePath(filePath) {
-  let escapedPath = "file:///" + removePrefix(filePath, "file:///")
+  let escapedPath = "file:///" + filePath.replace(/^file:\/\//, '')
     .replace(/\\/g, '/')
     .split('/').map(encodeURIComponent).join('/')
     .replace(
