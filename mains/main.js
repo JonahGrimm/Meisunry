@@ -147,7 +147,7 @@ ipcMain.handle('readFilesFromDisk', async (event, filePath) => {
 
     // Push filtered file group to final list 
     async function pushFilteredFilesToList(targetFiles, targetFilePath) {
-      targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp|mp4|webm|mkv|avi|mov|wmv|flv|mts)$/i));
+      targetFiles = targetFiles.filter(file => file.match(/\.(jpg|jpeg|png|gif|jfif|webp|avif|mp4|webm|mkv|avi|mov|wmv|flv|mts)$/i));
       for (const filename of targetFiles) {
         const fullFilePath = path.join(targetFilePath, filename);
     
@@ -181,7 +181,7 @@ app.on('will-quit', () => {
 });
 
 function isFileAnImage(fileName) {
-  const isImagePattern = /\.(jpg|jpeg|png|gif|jfif|webp)$/i;
+  const isImagePattern = /\.(jpg|jpeg|png|gif|jfif|webp|avif)$/i;
   return isImagePattern.test(fileName);
 }
 

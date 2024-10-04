@@ -1,3 +1,20 @@
+/**
+ * Escapes special characters in file paths
+ * @param {string} filePath
+ * @returns {string} filePath with special characters escaped
+*/
+function encodeFilePath(filePath) {
+  let escapedPath = "file:///" + filePath.replace(/^file:\/\//, '') // Ensure prefix 'file:///'
+    .replace(/\\/g, '/') // Replace backslashes with forward slashes
+    .split('/').map(encodeURIComponent).join('/') // Encode each part of the path
+    .replace(
+      /[!~*'()]/g,
+      (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    ) // Encode characters that are not encoded by encodeURIComponent
+  return escapedPath;
+}
+
+
 function addImage(file) {
   const gridItem = createImage(file);
   gridItem.style.visibility = "visible";
@@ -18,7 +35,7 @@ function createImage(file) {
   gridItem.className = 'grid-item';
 
   let imgElement;
-  const imgPath = file.fullPath;
+  const imgPath = encodeFilePath(file.fullPath);
   //console.log(file.isImage);
   if (file.isImage === true)
   {

@@ -285,7 +285,7 @@ contextMenu({
     type: 'checkbox',
     click: () => {
       // Action to copy the image path to clipboard
-      const imagePath = parameters.srcURL.replace("file:///", "").replace(/%20/g, ' '); // Get the image source URL
+      const imagePath = decodeURIComponent(parameters.srcURL.replace("file:///", "")); // Get the image source URL
       clipboard.writeText(imagePath); // Copy the image path to clipboard
       browserWindow.webContents.send('flash-copied', imagePath); 
     }
@@ -296,7 +296,7 @@ contextMenu({
     type: 'checkbox',
     click: () => {
       // Action to copy the image path to clipboard
-      const imagePath = parameters.srcURL.replace("file:///", "").replace(/%20/g, ' '); // Get the image source URL
+      const imagePath = decodeURIComponent(parameters.srcURL.replace("file:///", "")); // Get the image source URL
       
       // Check if the file exists before attempting to delete it
       fs.access(imagePath, fs.constants.F_OK, (err) => {
@@ -319,12 +319,12 @@ contextMenu({
     }
   },
   /*{
-    label: `Search Google for ${parameters.srcURL.replace("file:///", "")}`,
+    label: `Search Google for ${decodeURIComponent(parameters.srcURL.replace("file:///", ""))}`,
     // Only show it when right-clicking text
     visible: parameters.hasImageContents,
     click: () => {
       url = parameters.srcURL;
-      shell.openExternal(`https://lens.google.com/uploadbyurl?url=${encodeURIComponent(url)}`);
+      shell.openExternal(`https://lens.google.com/uploadbyurl?url=${url}`);
     }
   }*/
 ]
