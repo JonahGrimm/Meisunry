@@ -7,9 +7,13 @@ focusImgVideoWrapper.onmouseup = (e) => {
   if (performance.now() - downTime < 150) hideFocusImg();
 };
 
+multiFocusWrapper.onmousedown = (e) => { downTime = performance.now(); };
+multiFocusWrapper.onmouseup = (e) => { if (performance.now() - downTime < 150) hideMultiFocus(); };
+
 // Exit full screen button
 backButton.addEventListener('click', () => {
   hideFocusImg();
+  hideMultiFocus();
 });
 
 
@@ -74,6 +78,14 @@ function hideFocusImg() {
   } else if (document.selection) { // For older versions of IE
     document.selection.empty();
   }
+}
+
+function hideMultiFocus() {
+  multiFocusWrapper.classList.remove('show');
+  multiFlex.innerHTML = '';
+  selectedFullPaths.clear();
+  document.querySelectorAll('.grid-image.selected').forEach(el => el.classList.remove('selected'));
+  backButton.classList.add('hide');
 }
 
 window.electronAPI.onHideFocusImg((event, value) => { hideFocusImg(); });

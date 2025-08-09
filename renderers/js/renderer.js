@@ -29,8 +29,16 @@ function createImage(file) {
     imgElement.id = imgPath;
     imgElement.className = "grid-image";
 
-    // Add full screen click event
-    imgElement.addEventListener('click', () => {
+    // Add click event: shift toggles selection; otherwise single focus
+    imgElement.addEventListener('click', (e) => {
+      if (isShiftDown) {
+        // Toggle selection
+        if (selectedFullPaths.has(imgPath)) selectedFullPaths.delete(imgPath);
+        else selectedFullPaths.add(imgPath);
+        // Visual hint (outline)
+        imgElement.classList.toggle('selected');
+        return;
+      }
       if (focusImgVideoWrapper.classList.contains('show')) 
       {
         focusImgVideoWrapper.classList.remove('show');
@@ -71,8 +79,15 @@ function createImage(file) {
       else audioA.classList.add(`unmute`);
     });
 
-    // Add full screen click event
-    imgElement.addEventListener('click', () => {
+    // Add click event: shift toggles selection; otherwise single focus
+    imgElement.addEventListener('click', (e) => {
+      if (isShiftDown) {
+        // Toggle selection for videos too
+        if (selectedFullPaths.has(imgPath)) selectedFullPaths.delete(imgPath);
+        else selectedFullPaths.add(imgPath);
+        imgElement.classList.toggle('selected');
+        return;
+      }
       if (focusImgVideoWrapper.classList.contains('show')) 
       {
         focusImgVideoWrapper.classList.remove('show');

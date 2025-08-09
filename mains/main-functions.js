@@ -2,6 +2,9 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+let folderWatcher = null;
+let refreshDebounceTimer = null;
+
 /* Save data to preferencesData */
 function saveAppData() {
   const userDataPath = app.getPath('userData');
@@ -40,6 +43,7 @@ function loadFolder (browserWindow, selectedFolderPath) {
   global.preferencesData.folderLocation = selectedFolderPath;
   saveAppData();
   loadIndex(browserWindow);
+  startFolderWatcher(browserWindow, selectedFolderPath);
 }
 
 function truncateFilePathToNearestFolder(filePath) {
@@ -73,4 +77,47 @@ function loadIndex(browserWindow) {
 function refreshGrid (browserWindow) {
   browserWindow.webContents.send('refresh-grid-update'); 
 }
-module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData, loadIndex, refreshGrid };
+
+function startFolderWatcher(browserWindow, folderPath) {
+  stopFolderWatcher();
+  if (!folderPath) return;
+
+  const triggerRefresh = () => {
+    if (refreshDebounceTimer) clearTimeout(refreshDebounceTimer);
+    refreshDebounceTimer = setTimeout(() => {
+      refreshGrid(browserWindow);
+    }, 300);
+  };
+
+  const shouldWatchRecursively = (global.preferencesData && typeof global.preferencesData.recursion === 'number' && global.preferencesData.recursion > 0);
+
+  try {
+    folderWatcher = fs.watch(folderPath, { recursive: shouldWatchRecursively }, (eventType, filename) => {
+      if (!filename) return;
+      const lower = filename.toLowerCase();
+      if (!lower.match(/\.(jpg|jpeg|png|gif|jfif|webp|mp4|webm|mkv|avi|mov|wmv|flv|mts)$/i)) return;
+      triggerRefresh();
+    });
+  } catch (err) {
+    try {
+      folderWatcher = fs.watch(folderPath, {}, () => {
+        triggerRefresh();
+      });
+    } catch (err2) {
+      folderWatcher = null;
+    }
+  }
+}
+
+function stopFolderWatcher() {
+  if (folderWatcher) {
+    try { folderWatcher.close(); } catch (e) {}
+    folderWatcher = null;
+  }
+  if (refreshDebounceTimer) {
+    clearTimeout(refreshDebounceTimer);
+    refreshDebounceTimer = null;
+  }
+}
+
+module.exports = { saveAppData, truncateFilePathToNearestFolder, loadFolder, loadData, loadIndex, refreshGrid, startFolderWatcher, stopFolderWatcher };

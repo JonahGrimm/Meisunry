@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { loadFolder, saveAppData, truncateFilePathToNearestFolder, loadData, loadIndex } = require('./main-functions');
+const { loadFolder, saveAppData, truncateFilePathToNearestFolder, loadData, loadIndex, startFolderWatcher, stopFolderWatcher } = require('./main-functions');
 
 global.preferencesData = loadData();
 
@@ -24,6 +24,10 @@ function createWindow() {
   });
 
   loadIndex(mainWindow);
+  // Start watcher on initial folder
+  if (global.preferencesData.folderLocation) {
+    startFolderWatcher(mainWindow, global.preferencesData.folderLocation);
+  }
 
   /* Functions for handling window min/max/close */
   ipcMain.on('closeApp', () => {
@@ -178,6 +182,7 @@ app.on('window-all-closed', function () {
 // When the app is about to quit, unregister all shortcuts
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
+  try { stopFolderWatcher(); } catch (e) {}
 });
 
 function isFileAnImage(fileName) {
