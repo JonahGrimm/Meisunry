@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Electron Photo Display with Masonry Layout</title>
   <!-- Include the Masonry Layout CSS -->
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
@@ -22,9 +24,9 @@
             </div>
           </div>
           <div class="titleBarBtns">
-            <button id="minimizeBtn" class="topBtn minimizeBtn"></button>
-            <button id="maxResBtn" class="topBtn maximizeBtn"></button>
-            <button id="closeBtn" class="topBtn closeBtn"></button>
+            <button id="minimizeBtn" class="topBtn minimizeBtn" aria-label="Minimize" title="Minimize"></button>
+            <button id="maxResBtn" class="topBtn maximizeBtn" aria-label="Maximize or Restore" title="Maximize or Restore"></button>
+            <button id="closeBtn" class="topBtn closeBtn" aria-label="Close" title="Close"></button>
           </div>
         </div>
       </div>
@@ -42,11 +44,14 @@
         <div id="grid-overlay"><div>Drop to select folder or add image to folder</div></div>
         <div id="img-focus-wrapper" class="">
           <div id="zoomPanHolder">
-            <img id="img-focus" src="">
+            <img id="img-focus" src="" alt="Focused image">
             <video autoplay loop id="video-focus">
               <source src="">
             </video>
           </div>
+        </div>
+        <div id="multi-focus-wrapper" class="">
+          <div id="multi-flex"></div>
         </div>
         <div class="grid" id="imageGrid">
       </div>

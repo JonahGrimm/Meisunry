@@ -7,6 +7,7 @@ function enterFullscreen() {
   wrapper.classList.add(`full-screen`);
   overlay.classList.add(`full-screen`);
   focusImgVideoWrapper.classList.add(`full-screen`);
+  multiFocusWrapper.classList.add(`full-screen`);
   if (is_an_image_focused()) resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
 }
 
@@ -15,6 +16,7 @@ function leaveFullscreen() {
   wrapper.classList.remove(`full-screen`);
   overlay.classList.remove(`full-screen`);
   focusImgVideoWrapper.classList.remove(`full-screen`);
+  multiFocusWrapper.classList.remove(`full-screen`);
   if (is_an_image_focused()) resetPanZoom(focusImg.naturalWidth, focusImg.naturalHeight);
 }
 
